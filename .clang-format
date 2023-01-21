@@ -1,0 +1,5 @@
+BasedOnStyle: LLVM
+SeparateDefinitionBlocks: Always
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
