@@ -7,6 +7,8 @@
 #include "ReadOnlyStorage.h"
 #include <filesystem>
 
+namespace file_management {
+
 template <class Id>
 class Storage : public ReadOnlyStorage<Id> {
   public:
@@ -30,3 +32,5 @@ template <class Id>
 std::unique_ptr<typename Storage<Id>::ReadOnlyArchive> Storage<Id>::findReadOnlyFor(const Id &id) {
     return findFor(id);
 }
+
+} // namespace file_management

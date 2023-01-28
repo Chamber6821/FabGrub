@@ -6,6 +6,8 @@
 
 #include "Storage.h"
 
+namespace file_management {
+
 template <class Id>
 class AuthorityBasedStorage : public std::enable_shared_from_this<AuthorityBasedStorage<Id>>, public Storage<Id> {
     using Archive = Storage<Id>::Archive;
@@ -33,3 +35,5 @@ class AuthorityBasedStorage : public std::enable_shared_from_this<AuthorityBased
   protected:
     std::ostream rewriteFor(const Id &id) override;
 };
+
+} // namespace file_management

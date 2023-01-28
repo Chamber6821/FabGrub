@@ -7,6 +7,8 @@
 #include "../utils/Interface.h"
 #include <memory>
 
+namespace file_management {
+
 template <class Id>
 class Storage;
 
@@ -20,3 +22,5 @@ class ReadOnlyStorage : public Interface {
 
     virtual std::unique_ptr<ReadOnlyArchive> findReadOnlyFor(const Id &id) = 0;
 };
+
+} // namespace file_management
