@@ -7,15 +7,16 @@
 #include "../utils/Interface.h"
 #include <memory>
 
+template <class Id>
 class Storage;
-class ModImplementation;
 
+template <class Id>
 class ReadOnlyStorage : public Interface {
   public:
     class ReadOnlyArchive : public Interface {
       public:
-        virtual bool andCloneTo(Storage &storage) = 0;
+        virtual bool andCloneTo(Storage<Id> &storage) = 0;
     };
 
-    virtual std::unique_ptr<ReadOnlyArchive> findReadOnlyFor(const ModImplementation &mod) = 0;
+    virtual std::unique_ptr<ReadOnlyArchive> findReadOnlyFor(const Id &id) = 0;
 };
