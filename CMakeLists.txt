@@ -4,7 +4,11 @@ project(mod_management CXX)
 set(CMAKE_CXX_STANDARD 20)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
-add_library(sources ${SOURCES})
+if (NOT "${SOURCES}" STREQUAL "")
+    add_library(sources ${SOURCES})
+else ()
+    add_library(sources INTERFACE)
+endif ()
 
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} sources)
