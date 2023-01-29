@@ -25,7 +25,7 @@ class Storage : public ReadOnlyStorage<Id> {
     std::unique_ptr<ReadOnlyArchive> findReadOnlyFor(const Id &id) override;
 
   protected:
-    virtual std::ostream rewriteFor(const Id &id) = 0;
+    virtual std::shared_ptr<std::ostream> rewriteFor(const Id &id) = 0;
 };
 
 template <class Id>
