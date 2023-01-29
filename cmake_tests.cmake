@@ -8,6 +8,7 @@ FetchContent_Declare(
 function(add_tests TARGET SOURCE_LIBRARY SOURCE_FOLDER)
     file(GLOB_RECURSE TESTS "tests/*.cpp")
     add_executable(${TARGET} ${TESTS})
+    target_include_directories(${TARGET} PUBLIC tests/)
 
     target_link_libraries(${TARGET} ${SOURCE_LIBRARY})
     target_include_directories(${TARGET} PUBLIC ${SOURCE_FOLDER})
