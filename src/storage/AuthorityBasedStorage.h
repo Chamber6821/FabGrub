@@ -9,31 +9,33 @@
 namespace file_management {
 
 template <class Id>
-class AuthorityBasedStorage : public std::enable_shared_from_this<AuthorityBasedStorage<Id>>, public Storage<Id> {
-    using Archive = Storage<Id>::Archive;
-    using ReadOnlyArchive = Storage<Id>::ReadOnlyArchive;
+class AuthorityBasedStorage : public Storage<Id> {
+    using File = Storage<Id>::File;
+    using ReadOnlyFile = Storage<Id>::ReadOnlyFile;
 
-    class RecommendedArchive : public Archive {
-        std::shared_ptr<AuthorityBasedStorage> parent;
-        std::unique_ptr<ReadOnlyArchive> source;
+    class RecommendedArchive : public File {
+        std::shared_ptr<Storage<Id>> cache;
+        std::unique_ptr<ReadOnlyFile> source;
+        const Id &id;
 
       public:
-        bool andCloneTo(Storage<Id> &storage) override;
-        bool andRemove() override;
+        RecommendedArchive(std::shared_ptr<Storage<Id>> cache, std::unique_ptr<ReadOnlyFile> source, const Id &id);
+
+        bool cloneTo(Storage<Id> &destination) override;
+        bool remove() override;
     };
 
     std::shared_ptr<ReadOnlyStorage<Id>> authority;
-    std::unique_ptr<Storage<Id>> storage;
+    std::shared_ptr<Storage<Id>> cache;
 
   public:
     AuthorityBasedStorage(std::shared_ptr<ReadOnlyStorage<Id>> authority, std::unique_ptr<Storage<Id>> storage);
 
-    std::unique_ptr<Archive> findFor(const Id &id) override;
     bool requireFor(const Id &id);
-    void clear() override;
 
-  protected:
-    std::ostream rewriteFor(const Id &id) override;
+    std::unique_ptr<File> findFor(const Id &id) override;
+    std::filesystem::path pathFor(const Id &id) override;
+    void clear() override;
 };
 
 } // namespace file_management

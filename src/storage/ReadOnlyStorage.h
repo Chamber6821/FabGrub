@@ -15,12 +15,12 @@ class Storage;
 template <class Id>
 class ReadOnlyStorage : public Interface {
   public:
-    class ReadOnlyArchive : public Interface {
+    class ReadOnlyFile : public Interface {
       public:
-        virtual bool andCloneTo(Storage<Id> &storage) = 0;
+        virtual bool cloneTo(Storage<Id> &storage) = 0;
     };
 
-    virtual std::unique_ptr<ReadOnlyArchive> findReadOnlyFor(const Id &id) = 0;
+    virtual std::unique_ptr<ReadOnlyFile> findReadOnlyFor(const Id &id) = 0;
 };
 
 } // namespace file_management

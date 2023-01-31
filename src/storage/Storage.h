@@ -12,24 +12,22 @@ namespace file_management {
 template <class Id>
 class Storage : public ReadOnlyStorage<Id> {
   public:
-    using ReadOnlyArchive = ReadOnlyStorage<Id>::ReadOnlyArchive;
+    using ReadOnlyFile = ReadOnlyStorage<Id>::ReadOnlyFile;
 
-    class Archive : public ReadOnlyArchive {
+    class File : public ReadOnlyFile {
       public:
-        virtual bool andRemove() = 0;
+        virtual bool remove() = 0;
     };
 
-    virtual std::unique_ptr<Archive> findFor(const Id &id) = 0;
+    virtual std::unique_ptr<File> findFor(const Id &id) = 0;
+    virtual std::filesystem::path pathFor(const Id &id) = 0;
     virtual void clear() = 0;
 
-    std::unique_ptr<ReadOnlyArchive> findReadOnlyFor(const Id &id) override;
-
-  protected:
-    virtual std::shared_ptr<std::ostream> rewriteFor(const Id &id) = 0;
+    std::unique_ptr<ReadOnlyFile> findReadOnlyFor(const Id &id) override;
 };
 
 template <class Id>
-std::unique_ptr<typename Storage<Id>::ReadOnlyArchive> Storage<Id>::findReadOnlyFor(const Id &id) {
+std::unique_ptr<typename Storage<Id>::ReadOnlyFile> Storage<Id>::findReadOnlyFor(const Id &id) {
     return findFor(id);
 }
 
