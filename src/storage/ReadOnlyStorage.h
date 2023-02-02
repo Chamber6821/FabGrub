@@ -4,23 +4,16 @@
 
 #pragma once
 
-#include "../utils/Interface.h"
+#include "utils/Interface.h"
+#include "forward.h"
 #include <memory>
 
 namespace file_management {
 
 template <class Id>
-class Storage;
-
-template <class Id>
 class ReadOnlyStorage : public Interface {
   public:
-    class ReadOnlyFile : public Interface {
-      public:
-        virtual bool cloneTo(Storage<Id> &storage) = 0;
-    };
-
-    virtual std::unique_ptr<ReadOnlyFile> findReadOnlyFor(const Id &id) = 0;
+    virtual std::unique_ptr<ReadOnlyFile<Id>> findReadOnlyFor(const Id &id) = 0;
 };
 
 } // namespace file_management
