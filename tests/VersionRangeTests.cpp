@@ -12,7 +12,9 @@ std::ostream &operator<<(std::ostream &out, const Version &version) {
     return out << version.major << '.' << version.minor << '.' << version.patch;
 }
 
-std::ostream &operator<<(std::ostream &out, const VersionRange &range) { return out << range.from << '-' << range.to; }
+std::ostream &operator<<(std::ostream &out, const VersionRange &range) {
+    return out << range.from << '-' << range.to;
+}
 
 TEST_SUITE("VersionRange") {
     TEST_CASE("method in") {
@@ -62,7 +64,8 @@ TEST_SUITE("VersionRange") {
         VersionRange range2{low2, high2};
         CAPTURE(range2);
 
-        VersionRange expectedIntersection{std::max(low1, low2), std::min(high1, high2)};
+        VersionRange expectedIntersection{std::max(low1, low2),
+                                          std::min(high1, high2)};
 
         REQUIRE_EQ(expectedIntersection, range1 && range2);
     }
@@ -92,7 +95,8 @@ TEST_SUITE("VersionRange") {
 }
 
 TEST_SUITE("VersionRange fabric methods") {
-    TEST_CASE("greaterThan should return range with right border equal to positive_infinity") {
+    TEST_CASE("greaterThan should return range with right border equal to "
+              "positive_infinity") {
         auto version = getRandomVersion();
         auto test = VersionRange::greaterThan(version);
 
@@ -102,11 +106,13 @@ TEST_SUITE("VersionRange fabric methods") {
         REQUIRE_EQ(test, VersionRange{left, VersionRange::positive_infinity});
     }
 
-    TEST_CASE("greaterOrEqualsThan should return range with right border equal to positive_infinity") {
+    TEST_CASE("greaterOrEqualsThan should return range with right border equal "
+              "to positive_infinity") {
         auto version = getRandomVersion();
         auto test = VersionRange::greaterOrEqualsThan(version);
 
-        REQUIRE_EQ(test, VersionRange{version, VersionRange::positive_infinity});
+        REQUIRE_EQ(test,
+                   VersionRange{version, VersionRange::positive_infinity});
     }
 
     TEST_CASE("equals should return range contains one version") {
@@ -116,14 +122,17 @@ TEST_SUITE("VersionRange fabric methods") {
         REQUIRE_EQ(test, VersionRange{version, version});
     }
 
-    TEST_CASE("lessOrEqualsThan should return range with left border equal to negative_infinity") {
+    TEST_CASE("lessOrEqualsThan should return range with left border equal to "
+              "negative_infinity") {
         auto version = getRandomVersion();
         auto test = VersionRange::lessOrEqualsThan(version);
 
-        REQUIRE_EQ(test, VersionRange{VersionRange::negative_infinity, version});
+        REQUIRE_EQ(test,
+                   VersionRange{VersionRange::negative_infinity, version});
     }
 
-    TEST_CASE("lessThan should return range with left border equal to negative_infinity") {
+    TEST_CASE("lessThan should return range with left border equal to "
+              "negative_infinity") {
         auto version = getRandomVersion();
         auto test = VersionRange::lessThan(version);
 

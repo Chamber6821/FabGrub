@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "ReadOnlyStorage.h"
 #include "File.h"
+#include "ReadOnlyStorage.h"
 #include "forward.h"
 #include <filesystem>
 
@@ -18,7 +18,8 @@ class Storage : public ReadOnlyStorage<Id> {
     virtual std::filesystem::path pathFor(const Id &id) = 0;
     virtual void clear() = 0;
 
-    inline std::unique_ptr<ReadOnlyFile<Id>> findReadOnlyFor(const Id &id) final;
+    inline std::unique_ptr<ReadOnlyFile<Id>>
+    findReadOnlyFor(const Id &id) final;
 };
 
 template <class Id>

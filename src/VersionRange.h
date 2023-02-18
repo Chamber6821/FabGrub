@@ -32,5 +32,6 @@ class VersionRange {
     VersionRange operator&&(const VersionRange &other) const;
     bool operator==(const VersionRange &other) const = default;
 
-    friend std::ostream &operator<<(std::ostream &out, const VersionRange &range);
+    friend std::ostream &operator<<(std::ostream &out,
+                                    const VersionRange &range);
 };

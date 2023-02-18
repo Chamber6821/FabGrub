@@ -17,7 +17,8 @@ class AuthorityBasedStorageTests : public Storage<Id> {
         const Id &id;
 
       public:
-        LazyFile(std::shared_ptr<Storage<Id>> cache, std::unique_ptr<ReadOnlyFile<Id>> source, const Id &id);
+        LazyFile(std::shared_ptr<Storage<Id>> cache,
+                 std::unique_ptr<ReadOnlyFile<Id>> source, const Id &id);
         bool exists() override;
         bool cloneTo(Storage<Id> &storage) override;
         void remove() override;
@@ -27,7 +28,8 @@ class AuthorityBasedStorageTests : public Storage<Id> {
     std::shared_ptr<Storage<Id>> cache;
 
   public:
-    AuthorityBasedStorageTests(std::shared_ptr<ReadOnlyStorage<Id>> authority, std::unique_ptr<Storage<Id>> storage);
+    AuthorityBasedStorageTests(std::shared_ptr<ReadOnlyStorage<Id>> authority,
+                               std::unique_ptr<Storage<Id>> storage);
 
     bool requireFor(const Id &id);
 
@@ -37,8 +39,9 @@ class AuthorityBasedStorageTests : public Storage<Id> {
 };
 
 template <class Id>
-AuthorityBasedStorageTests<Id>::LazyFile::LazyFile(std::shared_ptr<Storage<Id>> cache,
-                                                   std::unique_ptr<ReadOnlyFile<Id>> source, const Id &id)
+AuthorityBasedStorageTests<Id>::LazyFile::LazyFile(
+    std::shared_ptr<Storage<Id>> cache,
+    std::unique_ptr<ReadOnlyFile<Id>> source, const Id &id)
     : cache(cache), source(std::move(source)), id(id) {}
 
 template <class Id>
@@ -47,7 +50,8 @@ bool file_management::AuthorityBasedStorageTests<Id>::LazyFile::exists() {
 }
 
 template <class Id>
-bool file_management::AuthorityBasedStorageTests<Id>::LazyFile::cloneTo(Storage<Id> &storage) {
+bool file_management::AuthorityBasedStorageTests<Id>::LazyFile::cloneTo(
+    Storage<Id> &storage) {
     source->cloneTo(*cache);
     return cache->findFor(id)->cloneTo(storage);
 }
@@ -56,8 +60,9 @@ template <class Id>
 void file_management::AuthorityBasedStorageTests<Id>::LazyFile::remove() {}
 
 template <class Id>
-AuthorityBasedStorageTests<Id>::AuthorityBasedStorageTests(std::shared_ptr<ReadOnlyStorage<Id>> authority,
-                                                           std::unique_ptr<Storage<Id>> storage)
+AuthorityBasedStorageTests<Id>::AuthorityBasedStorageTests(
+    std::shared_ptr<ReadOnlyStorage<Id>> authority,
+    std::unique_ptr<Storage<Id>> storage)
     : authority(authority), cache(std::move(storage)) {}
 
 template <class Id>
@@ -77,11 +82,13 @@ void AuthorityBasedStorageTests<Id>::clear() {
 }
 
 template <class Id>
-std::unique_ptr<File<Id>> AuthorityBasedStorageTests<Id>::findFor(const Id &id) {
+std::unique_ptr<File<Id>>
+AuthorityBasedStorageTests<Id>::findFor(const Id &id) {
     if (auto cached = cache->findFor(id); cached->exists())
         return cached;
 
-    if (auto recommended = authority->findReadOnlyFor(id); recommended->exists())
+    if (auto recommended = authority->findReadOnlyFor(id);
+        recommended->exists())
         return std::make_unique<LazyFile>(cache, std::move(recommended), id);
 
     return std::make_unique<FalseFile<Id>>();

@@ -3,5 +3,4 @@ SeparateDefinitionBlocks: Always
 IndentWidth: 4
 TabWidth: 4
 UseTab: Never
-ColumnLimit: 120
 AlwaysBreakTemplateDeclarations: Yes
