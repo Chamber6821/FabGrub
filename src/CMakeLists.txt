@@ -9,8 +9,7 @@ message(DEBUG "Sources: " ${SOURCES})
 
 if (NOT "${SOURCES}" STREQUAL "")
     add_library(sources ${SOURCES})
+    target_include_directories(${TARGET} PUBLIC .)
 else ()
     add_library(sources INTERFACE)
 endif ()
-
-target_include_directories(${TARGET} INTERFACE .)
