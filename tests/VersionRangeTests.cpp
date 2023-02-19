@@ -92,6 +92,29 @@ TEST_SUITE("VersionRange") {
             CHECK(range.empty());
         }
     }
+
+    TEST_CASE("empty range should be equal to another empty range") {
+        auto first = getRandomEmptyRange();
+        auto second = getRandomEmptyRange();
+
+        REQUIRE_EQ(first, second);
+    }
+
+    TEST_CASE("should be equal to another range if borders is equals") {
+        auto left = getRandomVersion();
+        auto right = getRandomVersionGreaterThan(left);
+
+        VersionRange one(left, right), another(left, right);
+
+        REQUIRE_EQ(one, another);
+    }
+
+    TEST_CASE("should not be equal if another range has other borders") {
+        auto one = getRandomNotEmptyRange();
+        auto another = getRandomNotEmptyRange();
+
+        REQUIRE_NE(one, another);
+    }
 }
 
 TEST_SUITE("VersionRange fabric methods") {
