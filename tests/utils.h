@@ -15,3 +15,5 @@ Version getRandomVersionBetween(Version left, Version right);
 VersionRange getRandomRange();
 VersionRange getRandomNotEmptyRange();
 VersionRange getRandomEmptyRange();
+
+std::string getRandomNoSpaceName();
