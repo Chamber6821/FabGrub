@@ -3,7 +3,6 @@
 //
 
 #include "utils.h"
-#include "Version.h"
 #include <random>
 
 Version getRandomVersion() {
@@ -33,4 +32,20 @@ Version getRandomVersionBetween(Version left, Version right) {
     while (!(left < result && result < right))
         result = getRandomVersion();
     return result;
+}
+
+VersionRange getRandomRange() {
+    return {getRandomVersion(), getRandomVersion()};
+}
+
+VersionRange getRandomNotEmptyRange() {
+    auto left = getRandomVersion();
+    auto right = getRandomVersionGreaterThan(left);
+    return {left, right};
+}
+
+VersionRange getRandomEmptyRange() {
+    auto left = getRandomVersion();
+    auto right = getRandomVersionLessThan(left);
+    return {left, right};
 }
