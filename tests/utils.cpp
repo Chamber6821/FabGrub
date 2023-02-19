@@ -8,8 +8,7 @@
 
 Version getRandomVersion() {
     static std::mt19937 gen(std::random_device{}());
-    static std::uniform_int_distribution des{0,
-                                             std::numeric_limits<int>::max()};
+    static std::uniform_int_distribution des{0, 1000};
 
     return {.major = des(gen), .minor = des(gen), .patch = des(gen)};
 }
