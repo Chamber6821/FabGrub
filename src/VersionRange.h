@@ -15,6 +15,7 @@ class VersionRange {
   public:
     static const Version positive_infinity;
     static const Version negative_infinity;
+    static const VersionRange emptyRange;
 
     static VersionRange greaterThan(Version border);
     static VersionRange greaterOrEqualsThan(Version border);
