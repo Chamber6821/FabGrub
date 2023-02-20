@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Version.h"
-#include "VersionRange.h"
+#include "semver/Version.h"
+#include "semver/VersionRange.h"
 
 Version getRandomVersion();
 Version getRandomVersionLessThan(Version barrier);

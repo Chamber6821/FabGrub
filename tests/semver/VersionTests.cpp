@@ -2,8 +2,8 @@
 // Created by Ivan on 05.02.2023.
 //
 
-#include "Version.h"
-#include <doctest.h>
+#include "doctest.h"
+#include "semver/Version.h"
 
 TEST_SUITE_BEGIN("Version comparing");
 
