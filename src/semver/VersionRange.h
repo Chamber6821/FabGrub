@@ -27,7 +27,7 @@ class VersionRange {
 
     VersionRange(Version from, Version to);
 
-    [[nodiscard]] bool in(Version version) const;
+    [[nodiscard]] bool in(const Version &version) const;
     [[nodiscard]] bool empty() const;
 
     VersionRange operator&&(const VersionRange &other) const;
