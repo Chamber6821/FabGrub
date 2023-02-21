@@ -15,6 +15,9 @@ const Version VersionRange::negative_infinity = {
 const VersionRange VersionRange::nothing = {VersionRange::positive_infinity,
                                             VersionRange::negative_infinity};
 
+const VersionRange VersionRange::all = {VersionRange::negative_infinity,
+                                        VersionRange::positive_infinity};
+
 VersionRange VersionRange::greaterThan(Version border) {
     auto left = border;
     left.patch++;
