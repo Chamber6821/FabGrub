@@ -2,8 +2,8 @@
 // Created by Ivan on 27.01.2023.
 //
 
+#include "doctest.h"
 #include "storage/AuthorityBasedStorage.h"
-#include <doctest.h>
 #include <functional>
 #include <memory>
 #include <random>
