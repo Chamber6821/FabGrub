@@ -70,38 +70,6 @@ TEST_SUITE("VersionRange") {
         REQUIRE_EQ(expectedIntersection, range1 && range2);
     }
 
-    TEST_CASE("minus should exclude right part of range") {
-        auto originLeft = getRandomVersion();
-        auto excludedLeft = getRandomVersionGreaterThan(originLeft);
-        auto originRight = getRandomVersionGreaterThan(excludedLeft);
-        auto excludedRight = getRandomVersionGreaterThan(originRight);
-
-        VersionRange origin = {originLeft, originRight};
-        VersionRange excluded = {excludedLeft, excludedRight};
-
-        VersionRange expected = {originLeft, excludedLeft};
-
-        CAPTURE(origin);
-        CAPTURE(excluded);
-        REQUIRE_EQ((origin - excluded), expected);
-    }
-
-    TEST_CASE("minus should exclude left part of range") {
-        auto excludedLeft = getRandomVersion();
-        auto originLeft = getRandomVersionGreaterThan(excludedLeft);
-        auto excludedRight = getRandomVersionGreaterThan(originLeft);
-        auto originRight = getRandomVersionGreaterThan(excludedRight);
-
-        VersionRange origin = {originLeft, originRight};
-        VersionRange excluded = {excludedLeft, excludedRight};
-
-        VersionRange expected = {excludedRight, originRight};
-
-        CAPTURE(origin);
-        CAPTURE(excluded);
-        REQUIRE_EQ((origin - excluded), expected);
-    }
-
     TEST_CASE("method empty") {
         auto left = getRandomVersion();
         auto right = getRandomVersionGreaterThan(left);

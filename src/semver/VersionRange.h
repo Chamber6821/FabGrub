@@ -31,7 +31,6 @@ class VersionRange {
     [[nodiscard]] bool empty() const;
 
     VersionRange operator&&(const VersionRange &other) const;
-    VersionRange operator-(const VersionRange &other) const;
     bool operator==(const VersionRange &other) const;
 
     friend std::ostream &operator<<(std::ostream &out,
