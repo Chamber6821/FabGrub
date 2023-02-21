@@ -55,6 +55,6 @@ VersionRange VersionRange::operator&&(const VersionRange &other) const {
 
 bool VersionRange::empty() const { return to < from; }
 
-bool VersionRange::operator==(const VersionRange &other) const {
-    return (empty() && other.empty()) || (from == other.from && to == other.to);
+VersionRange VersionRange::wideUnion(const VersionRange &range) const {
+    return {std::min(from, range.from), std::max(to, range.to)};
 }

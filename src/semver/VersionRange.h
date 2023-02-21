@@ -31,6 +31,8 @@ class VersionRange {
     [[nodiscard]] bool in(const Version &version) const;
     [[nodiscard]] bool empty() const;
 
+    [[nodiscard]] VersionRange wideUnion(const VersionRange &range) const;
+
     VersionRange operator&&(const VersionRange &other) const;
     bool operator==(const VersionRange &other) const = default;
 

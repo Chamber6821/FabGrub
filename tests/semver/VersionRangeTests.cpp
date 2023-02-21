@@ -115,6 +115,49 @@ TEST_SUITE("VersionRange") {
 
         REQUIRE_NE(one, another);
     }
+
+    TEST_CASE("'wideUnion' for not empty ranges "
+              "should return union of ranges and space between them") {
+        auto leftLeft = getRandomVersion();
+        auto leftRight = getRandomVersionGreaterThan(leftLeft);
+        auto rightLeft = getRandomVersionGreaterThan(leftRight);
+        auto rightRight = getRandomVersionGreaterThan(rightLeft);
+
+        VersionRange left = {leftLeft, leftRight};
+        VersionRange right = {rightLeft, rightRight};
+
+        VersionRange expected = {leftLeft, rightRight};
+
+        CAPTURE(left);
+        CAPTURE(right);
+
+        SUBCASE("left.wideUnion(right)") {
+            REQUIRE_EQ(left.wideUnion(right), expected);
+        }
+
+        SUBCASE("right.wideUnion(left)") {
+            REQUIRE_EQ(right.wideUnion(left), expected);
+        }
+    }
+
+    TEST_CASE("'wideUnion' for empty and not empty ranges "
+              "should return original not empty range") {
+        auto notEmptyLeft = getRandomVersion();
+        auto notEmptyRight = getRandomVersionGreaterThan(notEmptyLeft);
+        VersionRange notEmpty = {notEmptyLeft, notEmptyRight};
+        VersionRange empty = VersionRange::nothing;
+
+        CAPTURE(notEmpty);
+        CAPTURE(empty);
+
+        SUBCASE("notEmpty.wideUnion(empty)") {
+            REQUIRE_EQ(notEmpty.wideUnion(empty), notEmpty);
+        }
+
+        SUBCASE("empty.wideUnion(notEmpty)") {
+            REQUIRE_EQ(empty.wideUnion(notEmpty), notEmpty);
+        }
+    }
 }
 
 TEST_SUITE("VersionRange fabric methods") {
