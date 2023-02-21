@@ -40,7 +40,10 @@ VersionRange VersionRange::lessOrEqualsThan(Version border) {
 
 VersionRange VersionRange::equals(Version target) { return {target, target}; }
 
-VersionRange::VersionRange(Version from, Version to) : from(from), to(to) {}
+VersionRange::VersionRange(Version from, Version to) : from(from), to(to) {
+    if (empty())
+        *this = nothing;
+}
 
 bool VersionRange::in(const Version &version) const {
     return from <= version && version <= to;
