@@ -13,7 +13,7 @@ std::ostream &operator<<(std::ostream &out, const Version &version) {
 }
 
 std::ostream &operator<<(std::ostream &out, const VersionRange &range) {
-    return out << range.from << '-' << range.to;
+    return out << range.from() << '-' << range.to();
 }
 
 TEST_SUITE("VersionRange") {

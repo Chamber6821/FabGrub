@@ -40,21 +40,25 @@ VersionRange VersionRange::lessOrEqualsThan(Version border) {
 
 VersionRange VersionRange::equals(Version target) { return {target, target}; }
 
-VersionRange::VersionRange(Version from, Version to) : from(from), to(to) {
+VersionRange::VersionRange(Version from, Version to) : _from(from), _to(to) {
     if (empty())
         *this = nothing;
 }
 
 bool VersionRange::in(const Version &version) const {
-    return from <= version && version <= to;
+    return _from <= version && version <= _to;
 }
 
 VersionRange VersionRange::operator&&(const VersionRange &other) const {
-    return {std::max(from, other.from), std::min(to, other.to)};
+    return {std::max(_from, other._from), std::min(_to, other._to)};
 }
 
-bool VersionRange::empty() const { return to < from; }
+bool VersionRange::empty() const { return _to < _from; }
 
 VersionRange VersionRange::wideUnion(const VersionRange &range) const {
-    return {std::min(from, range.from), std::max(to, range.to)};
+    return {std::min(_from, range._from), std::max(_to, range._to)};
 }
+
+Version VersionRange::from() const { return _from; }
+
+Version VersionRange::to() const { return _to; }

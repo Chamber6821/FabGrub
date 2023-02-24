@@ -9,8 +9,8 @@
 #include <ostream>
 
 class VersionRange {
-    Version from;
-    Version to;
+    Version _from;
+    Version _to;
 
   public:
     static const Version positive_infinity;
@@ -28,6 +28,9 @@ class VersionRange {
 
     VersionRange(Version from, Version to);
 
+    [[nodiscard]] Version from() const;
+    [[nodiscard]] Version to() const;
+
     [[nodiscard]] bool in(const Version &version) const;
     [[nodiscard]] bool empty() const;
 
@@ -35,7 +38,4 @@ class VersionRange {
 
     VersionRange operator&&(const VersionRange &other) const;
     bool operator==(const VersionRange &other) const = default;
-
-    friend std::ostream &operator<<(std::ostream &out,
-                                    const VersionRange &range);
 };
