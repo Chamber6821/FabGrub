@@ -29,9 +29,6 @@ class VersionUnion {
     [[nodiscard]] const_iterator begin() const;
     [[nodiscard]] const_iterator end() const;
 
-    friend std::ostream &operator<<(std::ostream &out,
-                                    const VersionUnion &range);
-
   private:
     std::vector<VersionRange> ranges;
 

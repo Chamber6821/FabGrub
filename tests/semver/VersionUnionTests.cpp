@@ -6,6 +6,7 @@
 #include "utils.h"
 #include <concepts>
 #include <doctest.h>
+#include <ranges>
 
 static std::ostream &operator<<(std::ostream &out, const Version &version) {
     return out << version.major << '.' << version.minor << '.' << version.patch;
@@ -16,14 +17,14 @@ static std::ostream &operator<<(std::ostream &out, const VersionRange &range) {
 }
 
 std::ostream &operator<<(std::ostream &out, const VersionUnion &aUnion) {
-    if (aUnion.ranges.empty())
+    if (std::ranges::empty(aUnion))
         return out << "<empty>";
 
-    auto it = aUnion.ranges.begin();
-    out << "(" << *(it++) << ")";
-    for (; it != aUnion.ranges.end(); ++it) {
-        out << " U (" << aUnion.ranges.back() << ")";
+    out << "(" << *std::begin(aUnion) << ")";
+    for (auto &x : aUnion | std::views::drop(1)) {
+        out << " U (" << x << ")";
     }
+
     return out;
 }
 
