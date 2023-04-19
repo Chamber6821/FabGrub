@@ -1,7 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
-project(tests CXX)
-
-set(CMAKE_CXX_STANDARD 20)
+project(tests)
 set(TARGET ${PROJECT_NAME})
 
 include(FetchContent)
