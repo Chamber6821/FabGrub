@@ -4,16 +4,11 @@
 
 #pragma once
 
-#include "semver/Version.h"
-#include "semver/VersionRange.h"
+#include "contract/semver/Version.h"
+#include "semver/MinVersionPart.h"
+#include <string>
 
-Version getRandomVersion();
-Version getRandomVersionLessThan(Version barrier);
-Version getRandomVersionGreaterThan(Version barrier);
-Version getRandomVersionBetween(Version left, Version right);
-
-VersionRange getRandomRange();
-VersionRange getRandomNotEmptyRange();
-VersionRange getRandomEmptyRange();
+VersionPart randomVersionPart(VersionPart min = MinVersionPart,
+                              VersionPart max = 100);
 
 std::string getRandomNoSpaceName();
