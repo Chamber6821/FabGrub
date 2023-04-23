@@ -7,7 +7,6 @@
 #include <functional>
 #include <memory>
 #include <random>
-#include <ranges>
 #include <set>
 #include <utility>
 
@@ -18,10 +17,9 @@ using Id = int;
 using File = file_management::File<Id>;
 using FalseFile = file_management::FalseFile<Id>;
 using Storage = file_management::Storage<Id>;
-using ReadOnlyStorage = file_management::ReadOnlyStorage<Id>;
 using AuthorityBasedStorage = file_management::AuthorityBasedStorageTests<Id>;
 
-Id getRandomId() {
+auto getRandomId() -> Id {
     static std::mt19937 generator(std::random_device{}());
     static std::uniform_int_distribution distribution(
         0, std::numeric_limits<int>::max());
@@ -33,33 +31,34 @@ class StubStorage : public Storage {
     using Container = std::set<const Id *>;
     using FileBuilder = std::function<std::unique_ptr<File>(
         StubStorage &parent, Container::const_iterator id)>;
-    Container contained;
+
+  private:
+    Container _container;
     FileBuilder fileBuilder;
     std::string pathPrefix;
 
+  public:
     class StubFile : public File {
-        Container &parentContainer;
+        Container *parentContainer;
         Container::const_iterator id;
 
       public:
         StubFile(Container &parentContainer, Container::const_iterator id)
-            : parentContainer(parentContainer), id(id) {}
+            : parentContainer(&parentContainer), id(std::move(id)) {}
 
-        bool exists() override { return id != parentContainer.end(); }
+        auto exists() -> bool override { return id != parentContainer->end(); }
 
-        bool cloneTo(Storage &storage) override {
-            if (!exists())
-                return false;
+        auto cloneTo(Storage &storage) -> bool override {
+            if (!exists()) return false;
             auto &_storage = dynamic_cast<StubStorage &>(storage);
             _storage.put(**id);
             return true;
         }
 
         void remove() override {
-            if (!exists())
-                return;
-            parentContainer.erase(id);
-            id = parentContainer.end();
+            if (!exists()) return;
+            parentContainer->erase(id);
+            id = parentContainer->end();
         }
     };
 
@@ -76,64 +75,69 @@ class StubStorage : public Storage {
                      " and concrete id ";
     }
 
-    void put(const Id &id) { contained.insert(&id); }
+    void put(const Id &id) { _container.insert(&id); }
 
-    std::unique_ptr<File> findFor(const Id &id) override {
-        auto it = contained.find(&id);
-        if (it == contained.end())
-            return make_unique<FalseFile>();
+    auto container() -> Container & { return _container; }
+
+    auto findFor(const Id &id) -> std::unique_ptr<File> override {
+        auto it = _container.find(&id);
+        if (it == _container.end()) return make_unique<FalseFile>();
         return fileBuilder(*this, it);
     }
 
-    std::filesystem::path pathFor(const Id &id) override {
+    auto pathFor(const Id &id) -> std::filesystem::path override {
         return pathPrefix + std::to_string(id);
     }
 
-    void clear() override { contained.clear(); }
+    void clear() override { _container.clear(); }
 };
 
-const StubStorage::FileBuilder createStubFile = [](auto &parent, auto id) {
-    return make_unique<StubStorage::StubFile>(parent.contained, id);
-};
+auto stubFileBuilder() -> StubStorage::FileBuilder {
+    return [](auto &parent, auto id) {
+        return make_unique<StubStorage::StubFile>(parent.container(), id);
+    };
+}
 
-const StubStorage::FileBuilder createFalseFile = [](auto &parent, auto id) {
-    return make_unique<FalseFile>();
-};
+auto falseFileBuilder() -> StubStorage::FileBuilder {
+    return [](auto &, auto) { return make_unique<FalseFile>(); };
+}
 
-StubStorage::StubStorage() : StubStorage(createStubFile) {}
+StubStorage::StubStorage() : StubStorage(stubFileBuilder()) {}
 
 TEST_SUITE_BEGIN("AuthorityBasedStorage");
 
 TEST_CASE("should proxy clear call to cache") {
-    auto authority = new StubStorage();
-    auto cache = new StubStorage();
-    cache->put(123);
-    cache->put(228);
+    auto authority = make_unique<StubStorage>();
+    auto cache = make_unique<StubStorage>();
 
-    AuthorityBasedStorage testStorage(
-        (std::shared_ptr<ReadOnlyStorage>(authority)),
-        std::unique_ptr<Storage>(cache));
+    auto id1 = getRandomId();
+    auto id2 = getRandomId();
+
+    cache->put(id1);
+    cache->put(id2);
+
+    AuthorityBasedStorage testStorage((std::move(authority)), std::move(cache));
 
     testStorage.clear();
 
-    REQUIRE(cache->contained.empty());
+    CHECK_FALSE(testStorage.findFor(id1)->exists());
+    CHECK_FALSE(testStorage.findFor(id2)->exists());
 }
 
 TEST_CASE("should proxy pathFor call to cache") {
-    Id id = getRandomId();
+    auto id = getRandomId();
 
-    auto authority = new StubStorage();
-    auto cache = new StubStorage();
+    auto authority = make_unique<StubStorage>();
+    auto cache = make_unique<StubStorage>();
+    auto expectedPath = cache->pathFor(id);
 
-    AuthorityBasedStorage testStorage(
-        (std::shared_ptr<ReadOnlyStorage>(authority)),
-        std::unique_ptr<Storage>(cache));
+    AuthorityBasedStorage testStorage((std::move(authority)), std::move(cache));
 
-    REQUIRE_EQ(testStorage.pathFor(id), cache->pathFor(id));
+    REQUIRE_EQ(testStorage.pathFor(id), expectedPath);
 }
 
 TEST_CASE("should return not exists file") {
-    Id id = getRandomId();
+    auto id = getRandomId();
 
     AuthorityBasedStorage testStorage(make_shared<StubStorage>(),
                                       std::move(make_unique<StubStorage>()));
@@ -144,99 +148,94 @@ TEST_CASE("should return not exists file") {
 }
 
 TEST_CASE("should return file from cache if exists") {
-    Id id = getRandomId();
+    auto id = getRandomId();
 
-    auto cache = new StubStorage();
+    auto cache = make_unique<StubStorage>();
     cache->put(id);
 
     AuthorityBasedStorage testStorage(make_shared<StubStorage>(),
-                                      std::unique_ptr<Storage>(cache));
+                                      std::move(cache));
 
     REQUIRE(testStorage.findFor(id)->exists());
 }
 
 TEST_CASE("clone file to destination") {
-    Id id = getRandomId();
+    auto id = getRandomId();
 
-    auto authority = new StubStorage();
+    auto authority = make_shared<StubStorage>();
     authority->put(id);
 
-    auto cache = new StubStorage();
+    auto cache = make_unique<StubStorage>();
 
-    auto destination = new StubStorage();
+    auto destination = make_unique<StubStorage>();
 
-    AuthorityBasedStorage testStorage(
-        (std::shared_ptr<ReadOnlyStorage>(authority)),
-        std::unique_ptr<Storage>(cache));
+    AuthorityBasedStorage testStorage((authority), std::move(cache));
     CHECK(testStorage.findFor(id)->cloneTo(*destination));
 
     SUBCASE("should save file to the inner storage") {
-        REQUIRE((cache->findFor(id)->exists()));
+        authority->findFor(id)->remove();
+        REQUIRE((testStorage.findFor(id)->exists()));
     }
+
     SUBCASE("should save file to the destination") {
         REQUIRE((destination->findFor(id)->exists()));
     }
 }
 
 TEST_CASE("should return non-existent file if cloning from authority failed") {
-    Id id = getRandomId();
+    auto id = getRandomId();
 
-    auto authority = new StubStorage(createFalseFile);
+    auto authority = make_unique<StubStorage>(falseFileBuilder());
     authority->put(id);
-    auto cache = new StubStorage();
-    auto destination = new StubStorage();
+    auto cache = make_unique<StubStorage>();
+    auto destination = make_unique<StubStorage>();
 
-    AuthorityBasedStorage testStorage(
-        (std::shared_ptr<ReadOnlyStorage>(authority)),
-        std::unique_ptr<Storage>(cache));
+    AuthorityBasedStorage testStorage((std::move(authority)), std::move(cache));
 
     REQUIRE_FALSE(testStorage.findFor(id)->cloneTo(*destination));
 }
 
 TEST_CASE("should return non-existent file if cloning from cache failed") {
-    Id id = getRandomId();
+    auto id = getRandomId();
 
-    auto destination = new StubStorage();
+    auto destination = make_unique<StubStorage>();
 
     SUBCASE("if cloning from authority successful") {
-        auto authority = new StubStorage();
+        auto authority = make_unique<StubStorage>();
         authority->put(id);
-        auto cache = new StubStorage(createFalseFile);
+        auto cache = make_unique<StubStorage>(falseFileBuilder());
 
-        AuthorityBasedStorage testStorage(
-            (std::shared_ptr<ReadOnlyStorage>(authority)),
-            std::unique_ptr<Storage>(cache));
+        AuthorityBasedStorage testStorage((std::move(authority)),
+                                          std::move(cache));
 
         REQUIRE_FALSE(testStorage.findFor(id)->cloneTo(*destination));
     }
 
     SUBCASE("if value already in cache") {
-        auto authority = new StubStorage();
-        auto cache = new StubStorage(createFalseFile);
+        auto authority = make_unique<StubStorage>();
+        auto cache = make_unique<StubStorage>(falseFileBuilder());
         cache->put(id);
 
-        AuthorityBasedStorage testStorage(
-            (std::shared_ptr<ReadOnlyStorage>(authority)),
-            std::unique_ptr<Storage>(cache));
+        AuthorityBasedStorage testStorage((std::move(authority)),
+                                          std::move(cache));
 
         REQUIRE_FALSE(testStorage.findFor(id)->cloneTo(*destination));
     }
 }
 
 TEST_CASE("should clone file to cache if required") {
-    Id id = getRandomId();
+    auto id = getRandomId();
 
-    auto authority = new StubStorage();
+    auto authority = make_shared<StubStorage>();
     authority->put(id);
 
-    auto cache = new StubStorage();
+    auto cache = make_unique<StubStorage>();
 
-    AuthorityBasedStorage testStorage(
-        (std::shared_ptr<ReadOnlyStorage>(authority)),
-        std::unique_ptr<Storage>(cache));
+    AuthorityBasedStorage testStorage(authority, std::move(cache));
 
     CHECK(testStorage.requireFor(id));
-    REQUIRE(cache->findFor(id)->exists());
+    authority->findFor(id)->remove();
+    REQUIRE(testStorage.findFor(id)->exists());
 }
 
 TEST_SUITE_END();

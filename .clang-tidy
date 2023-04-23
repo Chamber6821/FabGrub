@@ -3,8 +3,10 @@ Checks: >
   *,
   -llvm-header-guard,
   -llvmlibc-*,
-  -google-readability-braces-around-statements,
+  -*-braces-around-statements,
   -fuchsia-default-arguments-calls,
+  -fuchsia-trailing-return,
+  -readability-identifier-length,
 
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
