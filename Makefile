@@ -34,4 +34,4 @@ $(BUILD_DIR): $(ALL)
 	cmake -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(MODE) -DCMAKE_EXPORT_COMPILE_COMMANDS=ON $(CMAKE_OPTIONS)
 
 clean:
-	cmake --build $(BUILD_DIR) -t clean
+	cmake -D PATH:STRING=$(BUILD_DIR) -P ./cmake/rm.cmake
