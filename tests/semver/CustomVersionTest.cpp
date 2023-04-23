@@ -4,7 +4,7 @@
 
 #include "semver/CustomVersion.h"
 #include "doctest.h"
-#include "utils.h"
+#include "random.h"
 
 TEST_SUITE("CustomVersion") {
     const auto major = randomVersionPart();

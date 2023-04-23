@@ -2,7 +2,7 @@
 // Created by Ivan on 18.02.2023.
 //
 
-#include "utils.h"
+#include "random.h"
 #include <random>
 #include <ranges>
 

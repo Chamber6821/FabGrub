@@ -4,7 +4,7 @@
 
 #include "semver/MonotonousVersion.h"
 #include "doctest.h"
-#include "utils.h"
+#include "random.h"
 
 TEST_SUITE("MonotonousVersion") {
 

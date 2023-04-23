@@ -9,15 +9,12 @@ FetchContent_Declare(
         GIT_TAG v2.4.9
 )
 
-file(GLOB_RECURSE SOURCES "*.cpp")
-message(DEBUG "Test sources: " ${SOURCES})
-add_executable(${TARGET} ${SOURCES})
-target_include_directories(${TARGET} PUBLIC .)
+file(GLOB_RECURSE TESTS "*Test.cpp")
+add_executable(${TARGET} ${TESTS})
 
 FetchContent_MakeAvailable(doctest)
 FetchContent_GetProperties(doctest)
 target_link_libraries(${TARGET} doctest_with_main)
-message(DEBUG "Include: " ${doctest_SOURCE_DIR}/doctest)
 target_include_directories(${TARGET} PUBLIC ${doctest_SOURCE_DIR}/doctest)
 
 include(${FETCHCONTENT_BASE_DIR}/doctest-src/scripts/cmake/doctest.cmake)
