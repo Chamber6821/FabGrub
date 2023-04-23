@@ -1,0 +1,11 @@
+---
+Checks: >
+  *,
+  -llvm-header-guard,
+  -llvmlibc-*,
+  -google-readability-braces-around-statements,
+  -fuchsia-default-arguments-calls,
+
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
+FormatStyle: file
