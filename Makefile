@@ -24,7 +24,7 @@ ALL     = $(HEADERS) $(SOURCES) $(TESTS) $(CONFIGS)
 app: cmake tests clang-tidy
 	cmake --build $(BUILD_DIR) -t $(APP_TARGET) $(CMAKE_BUILD_OPTIONS)
 
-tests: cmake
+tests: cmake $(ALL)
 	cmake --build $(BUILD_DIR) -t $(TESTS_TARGET) $(CMAKE_BUILD_OPTIONS)
 	$(BUILD_DIR)/$(TESTS_TARGET)/$(TESTS_TARGET)
 
@@ -33,7 +33,7 @@ clang-tidy: cmake
 
 cmake: $(BUILD_DIR)
 
-$(BUILD_DIR): $(ALL)
+$(BUILD_DIR): $(CONFIGS)
 	cmake -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(MODE) -DCMAKE_EXPORT_COMPILE_COMMANDS=ON $(CMAKE_OPTIONS)
 
 clean:
