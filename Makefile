@@ -1,7 +1,7 @@
 
 include configuration.mk # user configuration for user platform
 
-# MODE = # from console
+MODE ?= Debug
 PERMISSIBLE_MODS=Debug Release
 ifeq ($(filter $(MODE), $(PERMISSIBLE_MODS)),)
 $(warning "Mode '$(MODE)' is not permissible!")
@@ -10,10 +10,9 @@ $(warning "Use 'make <target> MODE=Debug' or 'make <target> MODE=Release' to fix
 $(error "Mode '$(MODE)' is not permissible!")
 endif
 
-CMAKE_BUILD_TYPE = -DCMAKE_BUILD_TYPE$(MODE)
-BUILD_DIR        = $(BUILD_DIR_PREFIX)$(MODE)
+BUILD_DIR = $(BUILD_DIR_PREFIX)$(MODE)
 
-APP_TARGET   = FabGrub
+APP_TARGET   = hello
 TESTS_TARGET = tests
 
 HEADERS = $(wildcard src/**/*.h)
@@ -29,8 +28,10 @@ tests: cmake
 	cmake --build $(BUILD_DIR) -t $(TESTS_TARGET) $(CMAKE_BUILD_OPTIONS)
 	$(BUILD_DIR)/$(TESTS_TARGET)/$(TESTS_TARGET)
 
-cmake: $(ALL)
-	cmake -B $(BUILD_DIR) $(CMAKE_OPTIONS)
+cmake: $(BUILD_DIR)
+
+$(BUILD_DIR): $(ALL)
+	cmake -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(MODE) -DCMAKE_EXPORT_COMPILE_COMMANDS=ON $(CMAKE_OPTIONS)
 
 clean:
 	cmake --build $(BUILD_DIR) -t clean
