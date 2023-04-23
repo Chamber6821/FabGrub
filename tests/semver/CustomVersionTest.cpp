@@ -3,7 +3,7 @@
 //
 
 #include "semver/CustomVersion.h"
-#include "doctest.h"
+#include "doctest-nolint.h"
 #include "random.h"
 
 TEST_SUITE("CustomVersion") {

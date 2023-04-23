@@ -3,7 +3,7 @@
 //
 
 #include "semver/MonotonousVersion.h"
-#include "doctest.h"
+#include "doctest-nolint.h"
 #include "random.h"
 
 TEST_SUITE("MonotonousVersion") {
