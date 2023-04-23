@@ -96,7 +96,7 @@ const StubStorage::FileBuilder createStubFile = [](auto &parent, auto id) {
     return make_unique<StubStorage::StubFile>(parent.contained, id);
 };
 
-const StubStorage::FileBuilder createFalseFile = [](...) {
+const StubStorage::FileBuilder createFalseFile = [](auto &parent, auto id) {
     return make_unique<FalseFile>();
 };
 
