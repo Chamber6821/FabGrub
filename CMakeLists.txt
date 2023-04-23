@@ -11,6 +11,9 @@ add_subdirectory(tests)
 target_link_libraries(tests sources test-utils)
 target_include_directories(tests PUBLIC src test-utils)
 
+target_link_libraries(test-utils sources)
+target_include_directories(test-utils PUBLIC src)
+
 get_property(apps DIRECTORY "cmd" PROPERTY BUILDSYSTEM_TARGETS)
 foreach (app ${apps})
     target_link_libraries(${app} sources)
