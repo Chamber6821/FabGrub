@@ -9,5 +9,5 @@ Checks: >
   -readability-identifier-length,
 
 WarningsAsErrors: '*'
-HeaderFilterRegex: '.*'
+HeaderFilterRegex: '(\\|/)(src|test-utils)(\\|/)'
 FormatStyle: file
