@@ -15,11 +15,10 @@ BUILD_DIR = $(BUILD_DIR_PREFIX)$(MODE)
 APP_TARGET   = hello
 TESTS_TARGET = tests
 
-HEADERS = $(wildcard src/**/*.h)
-SOURCES = $(wildcard src/**/*.cpp)
-TESTS   = $(wildcard tests/**/*Test.cpp)
+HEADERS = $(wildcard src/**/*.h test-utils/**/*.h)
+SOURCES = $(wildcard src/**/*.cpp test-utils/**/*.cpp tests/**/*.cpp)
 CONFIGS = $(wildcard **/CMakeLists.txt)
-ALL     = $(HEADERS) $(SOURCES) $(TESTS) $(CONFIGS)
+ALL     = $(HEADERS) $(SOURCES) $(CONFIGS)
 
 app: cmake tests clang-tidy
 	cmake --build $(BUILD_DIR) -t $(APP_TARGET) $(CMAKE_BUILD_OPTIONS)
@@ -29,7 +28,7 @@ tests: cmake $(ALL)
 	$(BUILD_DIR)/$(TESTS_TARGET)/$(TESTS_TARGET)
 
 clang-tidy: cmake
-	clang-tidy -p $(BUILD_DIR) $(SOURCES) $(TESTS)
+	clang-tidy -p $(BUILD_DIR) $(SOURCES)
 
 cmake: $(BUILD_DIR)
 
