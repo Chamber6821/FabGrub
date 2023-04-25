@@ -20,7 +20,7 @@ SOURCES = $(wildcard src/**/*.cpp test-utils/**/*.cpp tests/**/*.cpp)
 CONFIGS = $(wildcard **/CMakeLists.txt)
 ALL     = $(HEADERS) $(SOURCES) $(CONFIGS)
 
-app: cmake tests clang-tidy
+app: cmake clang-format tests clang-tidy
 	cmake --build $(BUILD_DIR) -t $(APP_TARGET) $(CMAKE_BUILD_OPTIONS)
 
 tests: cmake $(ALL)
@@ -29,6 +29,9 @@ tests: cmake $(ALL)
 
 clang-tidy: cmake
 	clang-tidy -p $(BUILD_DIR) $(SOURCES)
+
+clang-format: cmake
+	clang-format -i $(HEADERS) $(SOURCES)
 
 cmake: $(BUILD_DIR)
 

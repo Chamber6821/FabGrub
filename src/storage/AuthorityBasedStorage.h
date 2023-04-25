@@ -84,8 +84,7 @@ void AuthorityBasedStorageTests<Id>::clear() {
 template <class Id>
 std::unique_ptr<File<Id>>
 AuthorityBasedStorageTests<Id>::findFor(const Id &id) {
-    if (auto cached = cache->findFor(id); cached->exists())
-        return cached;
+    if (auto cached = cache->findFor(id); cached->exists()) return cached;
 
     if (auto recommended = authority->findReadOnlyFor(id);
         recommended->exists())
