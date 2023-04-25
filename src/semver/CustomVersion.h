@@ -8,10 +8,14 @@
 #include "utils/pure.h"
 #include <compare>
 
-struct CustomVersion final {
-    const VersionPart _major, _minor, _patch;
+class CustomVersion final {
+    VersionPart _major, _minor, _patch;
 
   public:
+    // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+    CustomVersion(VersionPart major, VersionPart minor, VersionPart patch)
+        : _major(major), _minor(minor), _patch(patch) {}
+
     [[nodiscard]] pure major() const { return _major; }
 
     [[nodiscard]] pure minor() const { return _minor; }

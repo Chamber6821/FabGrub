@@ -7,20 +7,16 @@
 #include "random.h"
 
 TEST_SUITE("CustomVersion") {
-    const auto major = randomVersionPart();
-    const auto minor = randomVersionPart();
-    const auto patch = randomVersionPart();
-    const auto version = CustomVersion(major, minor, patch);
+    TEST_CASE("part should be equal to source part") {
+        const auto major = randomVersionPart();
+        const auto minor = randomVersionPart();
+        const auto patch = randomVersionPart();
+        const auto version = CustomVersion{major, minor, patch};
 
-    TEST_CASE("major should be equal to source major part") {
-        REQUIRE_EQ(version.major(), major);
-    }
+        SUBCASE("major to source major") { CHECK_EQ(version.major(), major); }
 
-    TEST_CASE("minor should be equal to source minor part") {
-        REQUIRE_EQ(version.minor(), minor);
-    }
+        SUBCASE("minor to source minor") { CHECK_EQ(version.minor(), minor); }
 
-    TEST_CASE("patch should be equal to source patch part") {
-        REQUIRE_EQ(version.patch(), patch);
+        SUBCASE("patch to source patch") { CHECK_EQ(version.patch(), patch); }
     }
 }
