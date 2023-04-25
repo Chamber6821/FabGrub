@@ -13,7 +13,8 @@ namespace file_management {
 template <class Id>
 class ReadOnlyStorage : public Interface {
   public:
-    virtual std::unique_ptr<ReadOnlyFile<Id>> findReadOnlyFor(const Id &id) = 0;
+    virtual auto findReadOnlyFor(const Id &id)
+        -> std::unique_ptr<ReadOnlyFile<Id>> = 0;
 };
 
 } // namespace file_management

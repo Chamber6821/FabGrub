@@ -8,12 +8,12 @@
 
 namespace file_management {
 
-template <class Id>
-class FalseFile : public File<Id> {
+template <class TId>
+class FalseFile : public File<TId> {
   public:
-    bool exists() override { return false; }
+    auto exists() -> bool override { return false; }
 
-    bool cloneTo(Storage<Id> &storage) override { return false; }
+    auto cloneTo(Storage<TId> & /*unused*/) -> bool override { return false; }
 
     void remove() override {}
 };

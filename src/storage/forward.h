@@ -6,16 +6,16 @@
 
 namespace file_management {
 
-template <class Id>
+template <class TId>
 class ReadOnlyStorage;
 
-template <class Id>
+template <class TId>
 class Storage;
 
-template <class Id>
+template <class TId>
 class ReadOnlyFile;
 
-template <class Id>
+template <class TId>
 class File;
 
 } // namespace file_management

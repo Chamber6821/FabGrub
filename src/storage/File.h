@@ -13,12 +13,12 @@ namespace file_management {
 template <class Id>
 class ReadOnlyFile : public Interface {
   public:
-    virtual bool exists() = 0;
-    virtual bool cloneTo(Storage<Id> &storage) = 0;
+    virtual auto exists() -> bool = 0;
+    virtual auto cloneTo(Storage<Id> &storage) -> bool = 0;
 };
 
-template <class Id>
-class File : public ReadOnlyFile<Id> {
+template <class TId>
+class File : public ReadOnlyFile<TId> {
   public:
     virtual void remove() = 0;
 };
