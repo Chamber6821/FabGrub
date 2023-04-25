@@ -4,7 +4,7 @@
 
 #pragma once
 
-class Interface {
+class Interface { // NOLINT(*-special-member-functions)
   public:
     virtual ~Interface() = default;
 };
