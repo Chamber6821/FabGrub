@@ -22,8 +22,8 @@ TESTS_EXECUTABLE = "$(BUILD_DIR)/$(TESTS_TARGET)/$(TESTS_TARGET)"
 
 HEADERS = $(wildcard src/**/*.h test-utils/**/*.h)
 SOURCES = $(wildcard src/**/*.cpp test-utils/**/*.cpp tests/**/*.cpp)
-CONFIGS = $(wildcard **/CMakeLists.txt)
-ALL     = $(HEADERS) $(SOURCES) $(CONFIGS)
+CODES   = $(HEADERS) $(SOURCES)
+CONFIGS = $(wildcard CMakeLists.txt **/CMakeLists.txt)
 
 app: cmake clang-format tests clang-tidy
 	cmake --build $(BUILD_DIR) -t $(APP_TARGET) $(CMAKE_BUILD_OPTIONS)
@@ -42,15 +42,15 @@ $(BUILD_DIR): $(CONFIGS)
 $(CACHE_DIR):
 	cmake -D PATH:STRING=$(CACHE_DIR) -P ./cmake/mkdir-p.cmake
 
-$(CACHE_DIR)/tests: $(BUILD_DIR) $(ALL) $(CACHE_DIR)
+$(CACHE_DIR)/tests: $(BUILD_DIR) $(CODES) $(CACHE_DIR)
 	cmake --build $(BUILD_DIR) -t $(TESTS_TARGET) $(CMAKE_BUILD_OPTIONS)
 	$(TESTS_EXECUTABLE) --order-by=rand
 	echo "" > $(CACHE_DIR)/tests
 
-$(CACHE_DIR)/clang-tidy: $(BUILD_DIR) $(CACHE_DIR) $(ALL) .clang-tidy
+$(CACHE_DIR)/clang-tidy: $(BUILD_DIR) $(CACHE_DIR) $(CODES) .clang-tidy
 	clang-tidy -p $(BUILD_DIR) $(SOURCES)
 	echo "" > $(CACHE_DIR)/clang-tidy
 
-$(CACHE_DIR)/clang-format: $(CACHE_DIR) $(HEADERS) $(ALL) .clang-format
-	clang-format -i $(HEADERS) $(SOURCES)
+$(CACHE_DIR)/clang-format: $(CACHE_DIR) $(CODES) .clang-format
+	clang-format -i $(CODES)
 	echo "" > $(CACHE_DIR)/clang-format
