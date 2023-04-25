@@ -5,10 +5,14 @@
 #pragma once
 
 #include "contract/semver/Version.h"
-#include "semver/MinVersionPart.h"
 #include <string>
 
-VersionPart randomVersionPart(VersionPart min = MinVersionPart,
-                              VersionPart max = 100);
+// calls randomVersionPart(min, max) with adequate values for log
+auto randomVersionPart() -> VersionPart;
 
-std::string getRandomNoSpaceName();
+auto randomVersionPart(VersionPart min, VersionPart max) -> VersionPart;
+
+// calls randomNoSpaceName(min, max) with adequate values for log
+auto randomNoSpaceName() -> std::string;
+
+auto randomNoSpaceName(int minLength, int maxLength) -> std::string;
