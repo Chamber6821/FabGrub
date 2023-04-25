@@ -9,7 +9,7 @@
 #include "utils/pure.h"
 
 class MonotonousVersion final {
-    const VersionPart part;
+    VersionPart part;
 
   public:
     constexpr explicit MonotonousVersion(VersionPart part) : part(part) {}
