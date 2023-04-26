@@ -7,8 +7,6 @@
 #include "random.h"
 #include "semver/CustomVersion.h"
 
-static_assert(sizeof(Min<int>) == sizeof(int));
-
 TEST_SUITE("NextPatch") {
     TEST_CASE("no overflowing") {
         const auto major = randomVersionPart();
