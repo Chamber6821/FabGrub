@@ -27,7 +27,7 @@ CODES   = $(HEADERS) $(SOURCES)
 CONFIGS = $(wildcard CMakeLists.txt **/CMakeLists.txt)
 
 CLANG_FORMAT_CACHE_FOLDER = $(CACHE_DIR)/clang-format
-CLANG_FORMAT_CACHE_FILES = $(foreach x,$(SOURCES),$(CLANG_FORMAT_CACHE_FOLDER)/$(x).label))
+CLANG_FORMAT_CACHE_FILES = $(foreach x,$(CODES),$(CLANG_FORMAT_CACHE_FOLDER)/$(x).label)
 
 app: cmake clang-format tests
 	cmake --build $(BUILD_DIR) -t $(APP_TARGET) $(CMAKE_BUILD_OPTIONS)
