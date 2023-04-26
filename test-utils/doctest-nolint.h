@@ -9,7 +9,7 @@
 #endif
 
 // NOLINTBEGIN
-#include "doctest.h"
+#include "doctest/doctest.h"
 // NOLINTEND
 
 #define TEST_CASE              DOCTEST_TEST_CASE              // NOLINT

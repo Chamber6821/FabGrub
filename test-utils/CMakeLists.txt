@@ -6,7 +6,9 @@ message(DEBUG "Sources: " ${SOURCES})
 
 if (NOT "${SOURCES}" STREQUAL "")
     add_library(${TARGET} ${SOURCES})
-    target_include_directories(${TARGET} PUBLIC .)
 else ()
-    add_library(${TARGET} INTERFACE)
+    file(GENERATE OUTPUT ${TARGET}-stub.cpp CONTENT "")
+    add_library(${TARGET} ${TARGET}-stub.cpp)
 endif ()
+
+target_include_directories(${TARGET} PUBLIC .)

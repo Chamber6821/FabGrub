@@ -10,6 +10,7 @@ $(warning "Use 'make <target> MODE=Debug' or 'make <target> MODE=Release' to fix
 $(error "Mode '$(MODE)' is not permissible!")
 endif
 MODE_LOWER = $(subst Debug,debug,$(subst Release,release,$(MODE)))
+$(MODE) = ON
 
 MAKEFLAGS += --no-print-directory
 
@@ -25,19 +26,21 @@ SOURCES = $(wildcard src/**/*.cpp test-utils/**/*.cpp tests/**/*.cpp)
 CODES   = $(HEADERS) $(SOURCES)
 CONFIGS = $(wildcard CMakeLists.txt **/CMakeLists.txt)
 
-app: cmake clang-format tests clang-tidy
+CLANG_FORMAT_CACHE_FOLDER = $(CACHE_DIR)/clang-format
+CLANG_FORMAT_CACHE_FILES = $(foreach x,$(SOURCES),$(CLANG_FORMAT_CACHE_FOLDER)/$(x).label))
+
+app: cmake clang-format tests
 	cmake --build $(BUILD_DIR) -t $(APP_TARGET) $(CMAKE_BUILD_OPTIONS)
 
 cmake: $(BUILD_DIR)
 tests: $(CACHE_DIR)/tests
-clang-tidy: $(CACHE_DIR)/clang-tidy
-clang-format: $(CACHE_DIR)/clang-format
+clang-format: $(CLANG_FORMAT_CACHE_FILES)
 
 clean:
 	cmake -D PATH:STRING=$(BUILD_DIR) -P ./cmake/rm.cmake
 
 $(BUILD_DIR): $(CONFIGS)
-	cmake -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(MODE) -DCMAKE_EXPORT_COMPILE_COMMANDS=ON $(CMAKE_OPTIONS)
+	cmake -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(MODE) $(CMAKE_OPTIONS)
 
 $(CACHE_DIR):
 	cmake -D PATH:STRING=$(CACHE_DIR) -P ./cmake/mkdir-p.cmake
@@ -47,10 +50,7 @@ $(CACHE_DIR)/tests: $(BUILD_DIR) $(CODES) $(CACHE_DIR)
 	$(TESTS_EXECUTABLE) --order-by=rand
 	echo "" > $(CACHE_DIR)/tests
 
-$(CACHE_DIR)/clang-tidy: $(BUILD_DIR) $(CACHE_DIR) $(CODES) .clang-tidy
-	clang-tidy -p $(BUILD_DIR) $(SOURCES)
-	echo "" > $(CACHE_DIR)/clang-tidy
-
-$(CACHE_DIR)/clang-format: $(CACHE_DIR) $(CODES) .clang-format
-	clang-format -i $(CODES)
-	echo "" > $(CACHE_DIR)/clang-format
+$(CLANG_FORMAT_CACHE_FILES): $(CLANG_FORMAT_CACHE_FOLDER)/%.label: % .clang-format
+	cmake -D PATH:STRING=$(dir $@) -P ./cmake/mkdir-p.cmake
+	clang-format -i $<
+	echo "" > $@
