@@ -20,7 +20,9 @@ class NextPatch final {
 
   public:
     constexpr NextPatch(T version, Min<VersionPart> min, Max<VersionPart> max)
-        : version(version), min(min), max(max) {}
+        : version(version), min(min), max(max) {
+        static_assert(Version<NextPatch>);
+    }
 
     constexpr explicit NextPatch(T version)
         : NextPatch(version, Min(MinVersionPart), Max(MaxVersionPart)) {}
