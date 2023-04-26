@@ -1,9 +1,10 @@
 ---
 Checks: >
   *,
-  -llvm-header-guard,
+  -altera-*,
   -llvmlibc-*,
   -*-braces-around-statements,
+  -llvm-header-guard,
   -fuchsia-default-arguments-calls,
   -fuchsia-trailing-return,
   -readability-identifier-length,
