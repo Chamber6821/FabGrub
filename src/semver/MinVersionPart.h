@@ -5,5 +5,6 @@
 #pragma once
 
 #include "contract/semver/Version.h"
+#include "semantic-type/Min.h"
 
-constexpr auto MinVersionPart = VersionPart{0};
+constexpr auto MinVersionPart = Min{VersionPart{0}};

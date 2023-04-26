@@ -7,29 +7,31 @@
 #include <random>
 
 auto randomVersionPart() -> VersionPart {
-    const auto max = VersionPart{100};
+    const auto max = Max{VersionPart{100}};
     return randomVersionPart(MinVersionPart, max);
 }
 
-auto randomVersionPart(VersionPart min, VersionPart max) -> VersionPart {
+auto randomVersionPart(Min<VersionPart> min, Max<VersionPart> max)
+    -> VersionPart {
     static std::mt19937 gen(std::random_device{}());
-    static std::uniform_int_distribution des{min, max};
+    static std::uniform_int_distribution des{min.value(), max.value()};
     return des(gen);
 }
 
 auto randomNoSpaceName() -> std::string {
-    const int minLength = 3;
-    const int maxLength = 10;
-    return randomNoSpaceName(minLength, maxLength);
+    const auto min = Min{3};
+    const auto max = Max{10};
+    return randomNoSpaceName(min, max);
 }
 
-auto randomNoSpaceName(int minLength, int maxLength) -> std::string {
+auto randomNoSpaceName(Min<int> minLength, Max<int> maxLength) -> std::string {
     static constexpr std::string_view alphabet = "0123456789"
                                                  "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                                                  "abcdefghijklmnopqrstuvwxyz";
     static std::mt19937 gen(std::random_device{}());
     static std::uniform_int_distribution alpha{0ULL, alphabet.size() - 1};
-    static std::uniform_int_distribution length{minLength, maxLength};
+    static std::uniform_int_distribution length{minLength.value(),
+                                                maxLength.value()};
 
     std::string name("-", length(gen));
     std::generate(name.begin(), name.end(),

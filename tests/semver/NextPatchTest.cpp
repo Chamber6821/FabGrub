@@ -25,11 +25,11 @@ TEST_SUITE("NextPatch") {
     }
 
     TEST_CASE("patch is max") {
-        const auto min = Min{VersionPart{0}};
-        const auto max = Max{VersionPart{MaxVersionPart}};
+        const auto min = MinVersionPart;
+        const auto max = MaxVersionPart;
 
-        const auto major = randomVersionPart(min.value(), max.value());
-        const auto minor = randomVersionPart(min.value(), max.value());
+        const auto major = randomVersionPart(min, max);
+        const auto minor = randomVersionPart(min, max);
         const auto patch = max.value();
 
         const auto next =
@@ -48,7 +48,7 @@ TEST_SUITE("NextPatch") {
         const auto min = Min{VersionPart{0}};
         const auto max = Max{VersionPart{100}};
 
-        const auto major = randomVersionPart(min.value(), max.value());
+        const auto major = randomVersionPart(min, max);
         const auto minor = max.value();
         const auto patch = max.value();
 

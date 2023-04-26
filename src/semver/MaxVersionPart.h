@@ -5,6 +5,7 @@
 #pragma once
 
 #include "contract/semver/Version.h"
+#include "semantic-type/Max.h"
 #include <limits>
 
-constexpr auto MaxVersionPart = std::numeric_limits<VersionPart>::max();
+constexpr auto MaxVersionPart = Max{std::numeric_limits<VersionPart>::max()};
