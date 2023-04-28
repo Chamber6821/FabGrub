@@ -2,9 +2,12 @@ cmake_minimum_required(VERSION 3.17)
 project(FabGrub CXX)
 
 set(CMAKE_CXX_STANDARD 20)
-find_program(CLANG_TIDY NAMES "clang-tidy" REQUIRED)
-set(CLANG_TIDY_COMMAND "${CLANG_TIDY};-p;${CMAKE_CURRENT_BINARY_DIR}")
-set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_COMMAND})
+
+if (NOT DEFINED FAST OR NOT ${FAST})
+    find_program(CLANG_TIDY NAMES "clang-tidy" REQUIRED)
+    set(CLANG_TIDY_COMMAND "${CLANG_TIDY};-p;${CMAKE_CURRENT_BINARY_DIR}")
+    set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_COMMAND})
+endif ()
 
 add_subdirectory(cmd)
 add_subdirectory(src)
