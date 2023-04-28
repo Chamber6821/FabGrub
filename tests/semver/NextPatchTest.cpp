@@ -9,11 +9,23 @@
 
 TEST_SUITE("NextPatch") {
     TEST_CASE("no overflowing") {
-        const auto major = randomVersionPart();
-        const auto minor = randomVersionPart();
-        const auto patch = randomVersionPart();
+        const auto min = Min{VersionPart{0}};
+        const auto max = Max{VersionPart{100}};
+        const auto overflowBorder = Max{VersionPart{101}};
 
-        const auto next = NextPatch(CustomVersion(major, minor, patch));
+        const auto major = randomVersionPart(min, max);
+        const auto minor = randomVersionPart(min, max);
+        const auto patch = randomVersionPart(min, max);
+
+        CAPTURE(major);
+        CAPTURE(minor);
+        CAPTURE(patch);
+        CAPTURE(min.value());
+        CAPTURE(max.value());
+        CAPTURE(overflowBorder.value());
+
+        const auto next =
+            NextPatch(CustomVersion(major, minor, patch), min, overflowBorder);
 
         SUBCASE("major should be constant") { CHECK_EQ(next.major(), major); }
 
@@ -25,15 +37,23 @@ TEST_SUITE("NextPatch") {
     }
 
     TEST_CASE("patch is max") {
-        const auto min = MinVersionPart;
-        const auto max = MaxVersionPart;
+        const auto min = Min{VersionPart{0}};
+        const auto safeMax = Max{VersionPart{100}};
+        const auto overflowBorder = Max{VersionPart{101}};
 
-        const auto major = randomVersionPart(min, max);
-        const auto minor = randomVersionPart(min, max);
-        const auto patch = max.value();
+        const auto major = randomVersionPart(min, safeMax);
+        const auto minor = randomVersionPart(min, safeMax);
+        const auto patch = overflowBorder.value();
+
+        CAPTURE(major);
+        CAPTURE(minor);
+        CAPTURE(patch);
+        CAPTURE(min.value());
+        CAPTURE(safeMax.value());
+        CAPTURE(overflowBorder.value());
 
         const auto next =
-            NextPatch(CustomVersion(major, minor, patch), min, max);
+            NextPatch(CustomVersion(major, minor, patch), min, overflowBorder);
 
         SUBCASE("major should be constant") { CHECK_EQ(next.major(), major); }
 
@@ -46,14 +66,22 @@ TEST_SUITE("NextPatch") {
 
     TEST_CASE("patch and minor is max") {
         const auto min = Min{VersionPart{0}};
-        const auto max = Max{VersionPart{100}};
+        const auto safeMax = Max{VersionPart{100}};
+        const auto overflowBorder = Max{VersionPart{101}};
 
-        const auto major = randomVersionPart(min, max);
-        const auto minor = max.value();
-        const auto patch = max.value();
+        const auto major = randomVersionPart(min, safeMax);
+        const auto minor = overflowBorder.value();
+        const auto patch = overflowBorder.value();
+
+        CAPTURE(major);
+        CAPTURE(minor);
+        CAPTURE(patch);
+        CAPTURE(min.value());
+        CAPTURE(safeMax.value());
+        CAPTURE(overflowBorder.value());
 
         const auto next =
-            NextPatch(CustomVersion(major, minor, patch), min, max);
+            NextPatch(CustomVersion(major, minor, patch), min, overflowBorder);
 
         SUBCASE("major should be larger by one") {
             CHECK_EQ(next.major(), major + 1);
@@ -66,14 +94,20 @@ TEST_SUITE("NextPatch") {
 
     TEST_CASE("patch and minor and major is max") {
         const auto min = Min{VersionPart{0}};
-        const auto max = Max{VersionPart{100}};
+        const auto overflowBorder = Max{VersionPart{100}};
 
-        const auto major = max.value();
-        const auto minor = max.value();
-        const auto patch = max.value();
+        const auto major = overflowBorder.value();
+        const auto minor = overflowBorder.value();
+        const auto patch = overflowBorder.value();
+
+        CAPTURE(major);
+        CAPTURE(minor);
+        CAPTURE(patch);
+        CAPTURE(min.value());
+        CAPTURE(overflowBorder.value());
 
         const auto next =
-            NextPatch(CustomVersion(major, minor, patch), min, max);
+            NextPatch(CustomVersion(major, minor, patch), min, overflowBorder);
 
         SUBCASE("major() should throw exception") {
             CHECK_THROWS((void)next.major());
