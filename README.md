@@ -1,31 +1,28 @@
-# Набросок системы профилей для модификаций
+# Draft of the profile system for Factorio mods
 
-Фундаментальные функции:
+# Functions:
 
-- Иметь профиль по умолчанию
-- Иметь список именованных профилей
-- В каждом профиле есть перечень модов и их версий
-  (разные профили могут содержать один и тот же мод, но в разных версиях)
-- Обязательные зависимости мода подтягиваются неявно (пользователю не нужно добавлять их в профиль)
-- Моды хранятся в неком репозитории
-- Один профиль не может содержать один и тот же мод разных версий
-- Решение графа зависимостей
-  (комбинации некоторых версий могут быть не совместимы, хотелось бы знать ВСЕ несовместимые версии в профиле)
-
-Функции конкретно для Factorio:
-
-- Собирать информацию о модах на сайте https://re146.dev/
-- (спорно) Свалить все моды в кучу, что бы у каждого профиля не было свое копии мода
-- Импорт/экспорт профилей
-- Возможность отключить обновление конкретной модификацией в профиле
-  (что бы обойти те случаи, когда разработчики ломают обратную совместимость)
-
-Список сущностей:
-
-- Мод как сборка всех его версий (Mod)
-- Конкретная реализация мода (ModImplementation)
-- Сборка модов с версиями (Requirements)
-- Репозиторий (Repository)
+- Users can work with the list of named profiles
+    - User can create a new empty profile with name
+    - User can delete exists profile by name
+    - User can add a new mod to the profile
+    - User can change added version range for mod
+    - User can delete added mod from profile
+    - User can export profile to text file
+    - User can import profile from text file
+    - User can see the profile name and mods in this profile
+    - User can see the names of all existing profiles
+    - User can load profile by name
+        - If some profile already loaded, it must be unloaded
+        - Load profile means that for each mod range in profile must be a selected compatible version
+          and putted into folder `mods`
+        - Concrete version of mod can require another mod to be installed,
+          that requirement must be solved automatically (not manual)
+        - If the profile contains incompatible mods, user must see that combination
+- Mods must be downloaded from https://re146.dev/factorio/mods/
+- Last used mods must be cached
+    - User can clear full mod cache
+    - User can clear mod cache for concrete profile
 
 # How to build
 
