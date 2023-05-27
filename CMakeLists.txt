@@ -17,11 +17,8 @@ endif ()
 
 add_subdirectory(cmd)
 add_subdirectory(src)
-#set_target_properties(src PROPERTIES CXX_CLANG_TIDY ${CLANG_TIDY_COMMAND})
 add_subdirectory(test-utils)
-#set_target_properties(test-utils PROPERTIES CXX_CLANG_TIDY ${CLANG_TIDY_COMMAND})
 add_subdirectory(tests)
-#set_target_properties(tests PROPERTIES CXX_CLANG_TIDY ${CLANG_TIDY_COMMAND})
 
 target_link_libraries(test-utils PRIVATE src)
 target_link_libraries(tests PRIVATE test-utils)
@@ -29,6 +26,5 @@ target_link_libraries(tests PRIVATE src)
 
 get_property(apps DIRECTORY "cmd" PROPERTY BUILDSYSTEM_TARGETS)
 foreach (app ${apps})
-    #    set_target_properties(${app} PROPERTIES CXX_CLANG_TIDY ${CLANG_TIDY_COMMAND})
     target_link_libraries(${app} PRIVATE src)
 endforeach ()
