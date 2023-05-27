@@ -1,0 +1,62 @@
+name: Build
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  test:
+    name: Test
+    strategy:
+      matrix:
+        os: [ windows-2022, ubuntu-22.04 ]
+        config: [ config/debug.mk, config/release.mk ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cache CMake build folder
+        uses: actions/cache@v3
+        with:
+          path: cmake-build-*/
+          key: ${{ runner.os }}-${{ github.job }}-${{ matrix.config }}
+      - name: Build and Run unit tests
+        run: make test CONFIG=${{ matrix.config }}
+      - name: Build and Run integration tests
+        run: make it CONFIG=${{ matrix.config }}
+  lint:
+    name: Lint
+    strategy:
+      matrix:
+        os: [ ubuntu-22.04 ]
+        config: [ config/debug.mk, config/release.mk ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cache CMake build folder
+        uses: actions/cache@v3
+        with:
+          path: cmake-build-*/
+          key: ${{ runner.os }}-${{ github.job }}-${{ matrix.config }}
+      - name: Lint
+        run: make lint CONFIG=${{ matrix.config }}
+  # see https://github.com/orgs/community/discussions/26822#discussioncomment-5122101
+  complete:
+    name: Complete CI
+    needs: [ test, lint ]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check all job status
+        # see https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#needs-context
+        # see https://stackoverflow.com/a/67532120/4907315
+        if: >-
+          ${{
+               contains(needs.*.result, 'failure')
+            || contains(needs.*.result, 'cancelled')
+            || contains(needs.*.result, 'skipped')
+          }}
+        run: exit 1
