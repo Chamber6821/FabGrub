@@ -19,10 +19,13 @@ add_subdirectory(cmd)
 add_subdirectory(src)
 add_subdirectory(test-utils)
 add_subdirectory(tests)
+add_subdirectory(it)
 
 target_link_libraries(test-utils PRIVATE src)
 target_link_libraries(tests PRIVATE test-utils)
 target_link_libraries(tests PRIVATE src)
+target_link_libraries(it PRIVATE test-utils)
+target_link_libraries(it PRIVATE src)
 
 get_property(apps DIRECTORY "cmd" PROPERTY BUILDSYSTEM_TARGETS)
 foreach (app ${apps})
