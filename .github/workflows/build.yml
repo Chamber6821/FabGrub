@@ -51,8 +51,10 @@ jobs:
         run: |
           sudo apt install clang-format-16
           ln -s `which clang-format-16` /usr/local/bin/clang-format
-      - name: Install compiler clang-16
-        run: sudo apt install clang-16 libc++1-16
+      - name: Install clang-tidy-16
+        run: |
+          sudo apt install clang-tidy-16
+          ln -s `which clang-tidy-16` /usr/local/bin/clang-tidy
       - name: Lint
         run: make lint CONFIG=${{ matrix.config }}
         env:
