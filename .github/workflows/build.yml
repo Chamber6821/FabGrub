@@ -50,6 +50,13 @@ jobs:
           version: "16.0"
           cached: ${{ steps.cache-llvm.outputs.cache-hit }}
         # see https://stackoverflow.com/a/51333801/13830772
+      - name: Save LLVM and Clang
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            C:/Program Files/LLVM
+            ./llvm
+          key: ${{ steps.cache-llvm.outputs.cache-hit }}
       - name: Install libncurses5
         run: sudo apt install libncurses5
       - name: Cache CMake build folder
