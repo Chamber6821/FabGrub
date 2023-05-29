@@ -45,6 +45,9 @@ jobs:
         uses: KyleMayes/install-llvm-action@v1
         with:
           version: "16.0"
+        # see https://stackoverflow.com/a/51333801/13830772
+      - name: Install libncurses5
+        run: sudo apt install libncurses5
       - name: Lint
         run: make lint CONFIG=${{ matrix.config }}
         env:
