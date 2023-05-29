@@ -4,6 +4,7 @@
 
 #include "random.h"
 #include "semver/MinVersionPart.h"
+#include <algorithm>
 
 auto randomVersionPart() -> VersionPart {
     const auto max = Max{VersionPart{100}};
