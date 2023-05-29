@@ -58,7 +58,7 @@ jobs:
       - name: Lint
         run: make lint CONFIG=${{ matrix.config }}
         env:
-          C: clang-16
+          CC: clang-16
           CXX: clang++-16
   # see https://github.com/orgs/community/discussions/26822#discussioncomment-5122101
   complete:
