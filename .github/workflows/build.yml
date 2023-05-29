@@ -36,18 +36,27 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Cache LLVM and Clang
+        id: cache-llvm
+        uses: actions/cache@v3
+        with:
+          path: |
+            C:/Program Files/LLVM
+            ./llvm
+          key: ${{ matrix.os }}-llvm-16
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v1
+        with:
+          version: "16.0"
+          cached: ${{ steps.cache-llvm.outputs.cache-hit }}
+        # see https://stackoverflow.com/a/51333801/13830772
+      - name: Install libncurses5
+        run: sudo apt install libncurses5
       - name: Cache CMake build folder
         uses: actions/cache@v3
         with:
           path: cmake-build-*/
           key: ${{ runner.os }}-${{ github.job }}-${{ matrix.config }}
-      - name: Install LLVM and Clang
-        uses: KyleMayes/install-llvm-action@v1
-        with:
-          version: "16.0"
-        # see https://stackoverflow.com/a/51333801/13830772
-      - name: Install libncurses5
-        run: sudo apt install libncurses5
       - name: Lint
         run: make lint CONFIG=${{ matrix.config }}
         env:
