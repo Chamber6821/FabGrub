@@ -51,10 +51,13 @@ jobs:
         run: |
           sudo apt install clang-format-16
           ln -s `which clang-format-16` /usr/local/bin/clang-format
-      - name: Clang-format version
-        run: clang-format --version
+      - name: Install compiler clang-16
+        run: sudo apt install clang-16
       - name: Lint
         run: make lint CONFIG=${{ matrix.config }}
+        env:
+          C: clang-16
+          CXX: clang++-16
   # see https://github.com/orgs/community/discussions/26822#discussioncomment-5122101
   complete:
     name: Complete CI
