@@ -57,6 +57,12 @@ jobs:
             C:/Program Files/LLVM
             ./llvm
           key: ${{ steps.cache-llvm.outputs.cache-hit }}
+      - name: Add repo for LLVM 16
+        run: |
+          wget https://apt.llvm.org/llvm-snapshot.gpg.key
+          sudo apt-key add llvm-snapshot.gpg.key
+          sudo add-apt-repository 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-16 main'
+          sudo apt update
       - name: Install chore packages
         run: sudo apt install libncurses5 libc++-16-dev
       - name: Cache CMake build folder
