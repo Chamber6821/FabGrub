@@ -64,9 +64,7 @@ jobs:
             ./llvm
           key: ${{ steps.cache-llvm.outputs.cache-hit }}
       - name: Install chore packages
-        run: sudo apt install libncurses5 tree
-      - name: Tree of LLVM
-        run: tree ./llvm
+        run: sudo apt install libncurses5
       - name: Cache CMake build folder
         uses: actions/cache@v3
         with:
@@ -77,6 +75,7 @@ jobs:
         env:
           CC: clang
           CXX: clang++
+          CPATH: ./llvm/include/c++/v1/
   # see https://github.com/orgs/community/discussions/26822#discussioncomment-5122101
   complete:
     name: Complete CI
