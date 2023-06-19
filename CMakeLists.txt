@@ -14,6 +14,7 @@ if (NOT DEFINED FAST OR NOT ${FAST})
     find_program(CLANG_TIDY NAMES "clang-tidy" REQUIRED)
     set(CLANG_TIDY_COMMAND "${CLANG_TIDY};-p;${CMAKE_CURRENT_BINARY_DIR}")
     set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_COMMAND})
+    execute_process(COMMAND ${CLANG_TIDY} "--version")
 endif ()
 
 add_subdirectory(cmd)
