@@ -6,6 +6,11 @@ on:
   pull_request:
     branches:
       - master
+env:
+  CC: clang
+  CXX: clang++
+  LLVM_PATH: ./llvm
+  LLVM_VERSION: 16.0
 jobs:
   test:
     name: Test
@@ -15,8 +20,18 @@ jobs:
         config: [ config/debug.mk, config/release.mk ]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - name: Cache LLVM
+        uses: actions/cache@v3
+        id: cache-llvm
+        with:
+          path: ${{ env.LLVM_PATH }}
+          key: ${{ runner.os }}-llvm-${{ env.LLVM_VERSION }}
+      - name: Install LLVM
+        uses: KyleMayes/install-llvm-action@v1
+        with:
+          version: ${{ env.LLVM_VERSION }}
+          cached: ${{ steps.cache-llvm.outputs.cache-hit }}
       - name: Cache CMake build folder
         uses: actions/cache@v3
         with:
@@ -34,18 +49,25 @@ jobs:
         config: [ config/debug.mk, config/release.mk ]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Install LLVM and Clang
+      - uses: actions/checkout@v3
+      - name: Cache LLVM
+        uses: actions/cache@v3
+        id: cache-llvm
+        with:
+          path: ${{ env.LLVM_PATH }}
+          key: ${{ runner.os }}-llvm-${{ env.LLVM_VERSION }}
+      - name: Install LLVM
         uses: KyleMayes/install-llvm-action@v1
         with:
-          version: "16.0"
+          version: ${{ env.LLVM_VERSION }}
           cached: ${{ steps.cache-llvm.outputs.cache-hit }}
+      - name: Cache CMake build folder
+        uses: actions/cache@v3
+        with:
+          path: cmake-build-*/
+          key: ${{ runner.os }}-${{ github.job }}-${{ matrix.config }}
       - name: Lint
         run: make lint CONFIG=${{ matrix.config }}
-        env:
-          CC: clang
-          CXX: clang++
   # see https://github.com/orgs/community/discussions/26822#discussioncomment-5122101
   complete:
     name: Complete CI
