@@ -9,13 +9,14 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin)
 
-
 if (NOT DEFINED FAST OR NOT ${FAST})
     find_program(CLANG_TIDY NAMES "clang-tidy" REQUIRED)
     set(CLANG_TIDY_COMMAND "${CLANG_TIDY};-p;${CMAKE_CURRENT_BINARY_DIR}")
     set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_COMMAND})
     execute_process(COMMAND ${CLANG_TIDY} "--version")
 endif ()
+
+include(packages.cmake)
 
 add_subdirectory(cmd)
 add_subdirectory(src)
