@@ -183,11 +183,11 @@ TEST_SUITE("VersionOfString") {
     TEST_CASE("dots less than 2") {
         using namespace std::views; // NOLINT(google-build-using-namespace)
 
-        const auto minDotCount = Min{0};
-        const auto maxDotCount = Max{1};
+        const auto minSegmentsCount = Min{0};
+        const auto maxSegmentsCount = Max{2};
 
         auto generated =                                          //
-            iota(0, random(minDotCount, maxDotCount))             //
+            iota(0, random(minSegmentsCount, maxSegmentsCount))   //
             | transform([](auto x) { return std::to_string(x); }) //
             | transform([](auto x) { return "." + x; })           //
             | join                                                //
