@@ -22,7 +22,8 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 
     if (NOT WIN32)
         # GCC stdlib throws errors for some C++20 features
-        add_compile_options(-stdlib=libc++ -lc++)
+        add_compile_options(-stdlib=libc++)
+        add_link_options(-lc++)
     endif()
 endif ()
 
