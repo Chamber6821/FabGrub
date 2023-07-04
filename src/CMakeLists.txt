@@ -14,4 +14,4 @@ endif ()
 target_include_directories(${TARGET} PUBLIC .)
 
 FetchContent_MakeAvailable(fmt)
-target_link_libraries(${TARGET} PUBLIC fmt::fmt)
+target_link_libraries(${TARGET} PRIVATE fmt::fmt)
