@@ -16,6 +16,16 @@ if (NOT DEFINED FAST OR NOT ${FAST})
     execute_process(COMMAND ${CLANG_TIDY} "--version")
 endif ()
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    # In LLVM 16 std::views::join available only with -fexperimental-library
+    add_compile_options(-fexperimental-library)
+
+    if (NOT WIN32)
+        # GCC stdlib throws errors for some C++20 features
+        add_compile_options(-stdlib=libc++)
+    endif()
+endif ()
+
 include(packages.cmake)
 
 add_subdirectory(cmd)
