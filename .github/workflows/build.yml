@@ -10,7 +10,7 @@ env:
   CC: clang
   CXX: clang++
   LLVM_PATH: ./llvm
-  LLVM_VERSION: 16.0
+  LLVM_VERSION: 16
 jobs:
   test:
     name: Test
