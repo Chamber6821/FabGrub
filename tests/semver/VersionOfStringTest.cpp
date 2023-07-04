@@ -5,14 +5,14 @@
 #include "semver/VersionOfString.h"
 #include "doctest-nolint.h"
 #include "random.h"
-#include <format>
+#include <fmt/format.h>
 #include <numeric>
 #include <ranges>
 
 TEST_SUITE("VersionOfString") {
 
     auto exceptionMessage(std::string_view invalidVersion)->std::string {
-        return std::format("Could not parse '{}' version", invalidVersion);
+        return fmt::format("Could not parse '{}' version", invalidVersion);
     }
 
     TEST_CASE("should parse random version") {
@@ -46,7 +46,7 @@ TEST_SUITE("VersionOfString") {
         const auto minor = randomVersionPart();
         const auto patch = randomVersionPart();
 
-        const auto version = std::format("+{}.{}.{}", major, minor, patch);
+        const auto version = fmt::format("+{}.{}.{}", major, minor, patch);
 
         CAPTURE(version);
 
@@ -81,7 +81,7 @@ TEST_SUITE("VersionOfString") {
         const auto minor = randomVersionPart();
         const auto patch = randomVersionPart();
 
-        const auto version = std::format("{}.+{}.{}", major, minor, patch);
+        const auto version = fmt::format("{}.+{}.{}", major, minor, patch);
 
         CAPTURE(version);
 
@@ -116,7 +116,7 @@ TEST_SUITE("VersionOfString") {
         const auto minor = randomVersionPart();
         const auto patch = randomVersionPart();
 
-        const auto version = std::format("{}.{}.+{}", major, minor, patch);
+        const auto version = fmt::format("{}.{}.+{}", major, minor, patch);
 
         CAPTURE(version);
 
