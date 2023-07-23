@@ -4,6 +4,7 @@
 
 #include "random.h"
 #include "semver/MinVersionPart.h"
+#include <algorithm>
 
 auto randomVersionPart() -> VersionPart {
     const auto max = Max{VersionPart{100}};
@@ -27,7 +28,7 @@ auto randomNoSpaceName(Min<int> minLength, Max<int> maxLength) -> std::string {
                                                  "abcdefghijklmnopqrstuvwxyz";
 
     const auto alpha = [&]() {
-        return alphabet[random(Min{0ULL}, Max{alphabet.size() - 1})];
+        return alphabet[random(Min{std::size_t{0}}, Max{alphabet.size() - 1})];
     };
     const auto length = [&]() { return random(minLength, maxLength); };
 

@@ -5,14 +5,14 @@
 #include "semver/VersionOfString.h"
 #include "doctest-nolint.h"
 #include "random.h"
-#include <format>
+#include <fmt/format.h>
 #include <numeric>
 #include <ranges>
 
 TEST_SUITE("VersionOfString") {
 
     auto exceptionMessage(std::string_view invalidVersion)->std::string {
-        return std::format("Could not parse '{}' version", invalidVersion);
+        return fmt::format("Could not parse '{}' version", invalidVersion);
     }
 
     TEST_CASE("should parse random version") {
@@ -46,7 +46,7 @@ TEST_SUITE("VersionOfString") {
         const auto minor = randomVersionPart();
         const auto patch = randomVersionPart();
 
-        const auto version = std::format("+{}.{}.{}", major, minor, patch);
+        const auto version = fmt::format("+{}.{}.{}", major, minor, patch);
 
         CAPTURE(version);
 
@@ -81,7 +81,7 @@ TEST_SUITE("VersionOfString") {
         const auto minor = randomVersionPart();
         const auto patch = randomVersionPart();
 
-        const auto version = std::format("{}.+{}.{}", major, minor, patch);
+        const auto version = fmt::format("{}.+{}.{}", major, minor, patch);
 
         CAPTURE(version);
 
@@ -116,7 +116,8 @@ TEST_SUITE("VersionOfString") {
         const auto minor = randomVersionPart();
         const auto patch = randomVersionPart();
 
-        const auto version = std::format("{}.{}.+{}", major, minor, patch);
+        // NOLINTNEXTLINE
+        const auto version = fmt::format("{}.{}.+{}", major, minor, patch);
 
         CAPTURE(version);
 
@@ -147,11 +148,11 @@ TEST_SUITE("VersionOfString") {
     TEST_CASE("dots more than 2") {
         using namespace std::views; // NOLINT(google-build-using-namespace)
 
-        const auto minDotCount = Min{3};
-        const auto maxDotCount = Max{10};
+        const auto minSegmentsCount = Min{4};
+        const auto maxSegmentsCount = Max{10};
 
         auto generated =                                          //
-            iota(0, random(minDotCount, maxDotCount))             //
+            iota(0, random(minSegmentsCount, maxSegmentsCount))   //
             | transform([](auto x) { return std::to_string(x); }) //
             | transform([](auto x) { return "." + x; })           //
             | join                                                //
@@ -183,11 +184,11 @@ TEST_SUITE("VersionOfString") {
     TEST_CASE("dots less than 2") {
         using namespace std::views; // NOLINT(google-build-using-namespace)
 
-        const auto minDotCount = Min{0};
-        const auto maxDotCount = Max{1};
+        const auto minSegmentsCount = Min{0};
+        const auto maxSegmentsCount = Max{2};
 
         auto generated =                                          //
-            iota(0, random(minDotCount, maxDotCount))             //
+            iota(0, random(minSegmentsCount, maxSegmentsCount))   //
             | transform([](auto x) { return std::to_string(x); }) //
             | transform([](auto x) { return "." + x; })           //
             | join                                                //

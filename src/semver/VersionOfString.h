@@ -8,7 +8,7 @@
 #include "utils/parseInt.h"
 #include "utils/pure.h"
 #include <algorithm>
-#include <format>
+#include <fmt/format.h>
 #include <string_view>
 
 // Parse the string with the version looks like '1.0.0' (without spaces)
@@ -27,7 +27,7 @@ class VersionOfString final {
     } catch (...) {
 
         std::throw_with_nested(std::invalid_argument(
-            std::format("Could not parse '{}' version", string)));
+            fmt::format("Could not parse '{}' version", string)));
     }
 
     [[nodiscard]] pure minor() const try {
@@ -41,7 +41,7 @@ class VersionOfString final {
     } catch (...) {
 
         std::throw_with_nested(std::invalid_argument(
-            std::format("Could not parse '{}' version", string)));
+            fmt::format("Could not parse '{}' version", string)));
     }
 
     [[nodiscard]] pure patch() const try {
@@ -52,7 +52,7 @@ class VersionOfString final {
     } catch (...) {
 
         std::throw_with_nested(std::invalid_argument(
-            std::format("Could not parse '{}' version", string)));
+            fmt::format("Could not parse '{}' version", string)));
     }
 };
 
