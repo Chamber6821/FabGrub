@@ -116,6 +116,7 @@ TEST_SUITE("VersionOfString") {
         const auto minor = randomVersionPart();
         const auto patch = randomVersionPart();
 
+        // NOLINTNEXTLINE
         const auto version = fmt::format("{}.{}.+{}", major, minor, patch);
 
         CAPTURE(version);
