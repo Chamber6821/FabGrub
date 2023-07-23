@@ -45,9 +45,10 @@ class StubStorage : public Storage {
       public:
         // On Linux with Clang Container::const_iterator of the
         // trivially-copyable type
-        // NOLINT(*-move-const-arg)
+        // NOLINTBEGIN(*-move-const-arg)
         StubFile(Container &parentContainer, Container::const_iterator id)
             : parentContainer(&parentContainer), id(std::move(id)) {}
+        // NOLINTEND(*-move-const-arg)
 
         auto exists() -> bool override { return id != parentContainer->end(); }
 
