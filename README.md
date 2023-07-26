@@ -24,6 +24,27 @@
     - [ ] User can clear full mod cache
     - [ ] User can clear mod cache for concrete profile
 
+# Hot to use
+
+```shell
+$ fabgrub run profile1
+```
+
+# What is profile?
+
+Profile is JSON file that looks like that:
+
+File `<factorio-location>/profiles/space.json`:
+```json
+{
+  "space-exploration" : "^1.0.0",
+  "another-mod" : "^0.0.0",
+  "problem-mod" : "^2.0.0 <2.13.0"
+}
+```
+
+Command for run this: `fabgrub run space`
+
 # How to build
 
 Note: You should have installed `CMake` and `make`
