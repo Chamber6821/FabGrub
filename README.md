@@ -52,5 +52,5 @@ Note: You should have installed `CMake` and `make`
 Clone this repository, configure `configuration.mk` for yourself and run:
 
 ```
-$ make app MODE=Release
+$ make app
 ```
