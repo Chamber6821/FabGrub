@@ -26,9 +26,9 @@ Command for run this: `fabgrub run space`
 
 # How to build
 
-Note: You should have installed `CMake` and `make`
+Note: You should have installed `CMake`, `make` and some C++ compiler, for example `Clang`
 
-Clone this repository, configure `configuration.mk` for yourself and run:
+Clone this repository and run:
 
 ```
 $ make app
