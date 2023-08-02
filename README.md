@@ -1,4 +1,6 @@
-# Draft of the profile system for Factorio mods
+# FabGrub
+
+It is console utility for automatically assembly mods for concrete gaming session for Factorio.
 
 # Hot to use
 
