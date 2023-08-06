@@ -6,3 +6,7 @@ UseTab: Never
 AlwaysBreakTemplateDeclarations: Yes
 AllowShortIfStatementsOnASingleLine: Always
 AlignConsecutiveMacros: AcrossEmptyLines
+AllowAllArgumentsOnNextLine: false
+AlignAfterOpenBracket: BlockIndent
+BinPackArguments: false
+BreakStringLiterals: false
