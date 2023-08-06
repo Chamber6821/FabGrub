@@ -8,6 +8,7 @@ Checks: >
   -fuchsia-default-arguments-calls,
   -fuchsia-trailing-return,
   -readability-identifier-length,
+  -bugprone-easily-swappable-parameters,
 
 WarningsAsErrors: '*'
 HeaderFilterRegex: '(\\|/)(src|test-utils)(\\|/)'
