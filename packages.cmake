@@ -15,5 +15,5 @@ FetchContent_Declare(
 FetchContent_Declare(
         Reactions
         GIT_REPOSITORY https://github.com/Chamber6821/Reactions.git
-        GIT_TAG 0.0.5
+        GIT_TAG 0.1.0
 )
