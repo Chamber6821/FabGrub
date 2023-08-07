@@ -18,3 +18,6 @@ target_link_libraries(${TARGET} PUBLIC fmt::fmt)
 
 FetchContent_MakeAvailable(Reactions)
 target_link_libraries(${TARGET} PUBLIC Reactions::Reactions)
+
+FetchContent_MakeAvailable(pubgrub)
+target_link_libraries(${TARGET} PUBLIC pubgrub::pubgrub)

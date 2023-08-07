@@ -17,3 +17,9 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/Chamber6821/Reactions.git
         GIT_TAG 0.1.0
 )
+
+FetchContent_Declare(
+        pubgrub
+        GIT_REPOSITORY https://github.com/Chamber6821/pubgrub-cmake.git
+        GIT_TAG 0.3.1-cmake
+)
