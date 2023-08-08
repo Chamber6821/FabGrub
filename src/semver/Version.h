@@ -8,7 +8,7 @@
 
 class Version : public Interface {
   public:
-    virtual int major() = 0;
-    virtual int minor() = 0;
-    virtual int patch() = 0;
+    virtual auto major() -> int = 0;
+    virtual auto minor() -> int = 0;
+    virtual auto patch() -> int = 0;
 };
