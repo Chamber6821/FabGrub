@@ -20,7 +20,7 @@ class MemList : public List<T> {
 
     template <std::convertible_to<T>... Args>
     explicit MemList(Args... args)
-        : MemList(std::initializer_list(args...)) {}
+        : MemList({args...}) {}
 
     auto count() -> int override { return static_cast<int>(reqs.size()); };
 
