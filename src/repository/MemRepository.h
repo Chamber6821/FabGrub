@@ -24,7 +24,9 @@ class MemRepository : public Repository {
     MemRepository(std::initializer_list<Map::value_type> pairs)
         : MemRepository(std::map(pairs)) {}
 
-    MemRepository() : MemRepository({}) {}
+    template <std::convertible_to<Map::value_type>... Args>
+    explicit MemRepository(Args... args)
+        : MemRepository({args...}) {}
 
     auto packagesWithName(std::string name) -> ptr<Packages> override {
         if (not packageMap.contains(name)) return make<MemPackages>();
