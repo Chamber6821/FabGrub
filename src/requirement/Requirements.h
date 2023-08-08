@@ -4,11 +4,7 @@
 
 #pragma once
 
-#include "Reactions/misc/Interface.h"
 #include "Requirement.h"
+#include "utils/List.h"
 
-class Requirements : public Interface {
-  public:
-    virtual auto count() -> int = 0;
-    virtual auto at(int index) -> ptr<Requirement> = 0;
-};
+using Requirements = List<ptr<Requirement>>;
