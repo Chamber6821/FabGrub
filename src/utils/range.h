@@ -10,6 +10,6 @@
 
 template <class T>
 auto to_range(ptr<List<T>> list) {
-    return std::views::iota(list->count()) |
-           std::views::transform([&](int index) { return list->at(index); });
+    return std::views::iota(0, list->count()) |
+           std::views::transform([list](int index) { return list->at(index); });
 }
