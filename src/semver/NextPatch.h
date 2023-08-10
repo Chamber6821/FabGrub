@@ -8,6 +8,7 @@
 #include "utils/ptr.h"
 #include <limits>
 #include <stdexcept>
+#include <utility>
 
 class NextPatch : public Version {
     ptr<Version> version;
@@ -15,12 +16,12 @@ class NextPatch : public Version {
 
   public:
     NextPatch(ptr<Version> version, int min, int max)
-        : version(version), min(min), max(max) {}
+        : version(std::move(version)), min(min), max(max) {}
 
-    NextPatch(ptr<Version> version)
-        : NextPatch(version, 0, std::numeric_limits<int>::max()) {}
+    explicit NextPatch(ptr<Version> version)
+        : NextPatch(std::move(version), 0, std::numeric_limits<int>::max()) {}
 
-    auto major() -> int override {
+    [[nodiscard]] auto major() const -> int override {
         if (version->patch() != max) return version->major();
         if (version->minor() != max) return version->major();
         if (version->major() != max) return version->major() + 1;
@@ -28,7 +29,7 @@ class NextPatch : public Version {
         throw std::overflow_error("Version overflowed");
     }
 
-    auto minor() -> int override {
+    [[nodiscard]] auto minor() const -> int override {
         if (version->patch() != max) return version->minor();
         if (version->minor() != max) return version->minor() + 1;
         if (version->major() != max) return min;
@@ -36,7 +37,7 @@ class NextPatch : public Version {
         throw std::overflow_error("Version overflowed");
     }
 
-    auto patch() -> int override {
+    [[nodiscard]] auto patch() const -> int override {
         if (version->patch() != max) return version->patch() + 1;
         if (version->minor() != max) return min;
         if (version->major() != max) return min;

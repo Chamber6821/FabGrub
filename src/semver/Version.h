@@ -9,16 +9,16 @@
 
 class Version : public Interface {
   public:
-    virtual auto major() -> int = 0;
-    virtual auto minor() -> int = 0;
-    virtual auto patch() -> int = 0;
+    [[nodiscard]] virtual auto major() const -> int = 0;
+    [[nodiscard]] virtual auto minor() const -> int = 0;
+    [[nodiscard]] virtual auto patch() const -> int = 0;
 
-    auto operator==(Version &other) {
+    auto operator==(const Version &other) const {
         return std::make_tuple(major(), minor(), patch()) ==
                std::make_tuple(other.major(), other.minor(), other.patch());
     }
 
-    auto operator<=>(Version &other) {
+    auto operator<=>(const Version &other) const {
         return std::make_tuple(major(), minor(), patch()) <=>
                std::make_tuple(other.major(), other.minor(), other.patch());
     }

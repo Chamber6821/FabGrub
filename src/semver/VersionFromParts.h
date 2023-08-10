@@ -13,9 +13,11 @@
 #include "VersionPart.h"
 
 class VersionFromParts : public Version {
-    in<VersionPart> _major;
-    in<VersionPart> _minor;
-    in<VersionPart> _patch;
+    // VersionPart uses API from Reaction,
+    // but Reactions don't use const qualifier
+    mutable in<VersionPart> _major;
+    mutable in<VersionPart> _minor;
+    mutable in<VersionPart> _patch;
 
   public:
     VersionFromParts(
@@ -32,9 +34,9 @@ class VersionFromParts : public Version {
 
     VersionFromParts() : VersionFromParts(0, 0, 0) {}
 
-    auto major() -> int override { return _major->value(); };
+    auto major() const -> int override { return _major->value(); };
 
-    auto minor() -> int override { return _minor->value(); };
+    auto minor() const -> int override { return _minor->value(); };
 
-    auto patch() -> int override { return _patch->value(); };
+    auto patch() const -> int override { return _patch->value(); };
 };
