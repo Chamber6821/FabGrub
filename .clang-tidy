@@ -6,9 +6,11 @@ Checks: >
   -*-braces-around-statements,
   -llvm-header-guard,
   -fuchsia-default-arguments-calls,
+  -fuchsia-overloaded-operator,
   -fuchsia-trailing-return,
   -readability-identifier-length,
   -bugprone-easily-swappable-parameters,
+  -google-build-using-namespace,
 
 WarningsAsErrors: '*'
 HeaderFilterRegex: '(\\|/)(src|test-utils)(\\|/)'
