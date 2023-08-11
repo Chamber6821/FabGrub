@@ -11,30 +11,25 @@
 #include <sstream>
 #include <string>
 #include <tuple>
+#include <utility>
 
 namespace adapter {
 
 class Version {
-    int major, minor, patch;
+    ptr<::Version> version;
 
   public:
-    Version(int major, int minor, int patch)
-        : major(major), minor(minor), patch(patch) {}
+    explicit Version(ptr<::Version> version) : version(std::move(version)) {}
 
-    Version(const ptr<::Version> &version)
-        : Version(version->major(), version->minor(), version->patch()) {}
+    [[nodiscard]] auto origin() const -> ptr<::Version> { return version; }
 
-    auto operator<=>(const Version &other) const = default;
+    auto operator==(const Version &other) const {
+        return *version == *other.version;
+    };
 
-    friend auto &operator<<(std::ostream &out, const Version &v) noexcept {
-        return out << v.major << '.' << v.minor << '.' << v.patch;
-    }
-
-    auto resurrect() const {
-        std::stringstream ss;
-        ss << (*this);
-        return ss.str();
-    }
+    auto operator<=>(const Version &other) const {
+        return *version <=> *other.version;
+    };
 };
 
 static_assert(std::totally_ordered<Version>);

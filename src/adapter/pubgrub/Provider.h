@@ -5,6 +5,8 @@
 #pragma once
 
 #include "Requirement.h"
+#include "fmt/format.h"
+#include "fmt/ostream.h"
 #include "pubgrub/concepts.hpp"
 #include "repository/Repository.h"
 #include "utils/range.h"
@@ -33,8 +35,7 @@ class Provider {
 
         auto bestPackage =
             std::ranges::max(packagesInRange, [](const auto &l, const auto &r) {
-                return adapter::Version(l->version()) <
-                       adapter::Version(r->version());
+                return *l->version() < *r->version();
             });
         return Requirement{
             bestPackage->name(),
@@ -46,23 +47,26 @@ class Provider {
         -> std::vector<adapter::Requirement> {
         using namespace std::views;
 
-        auto version = (*req.range.iter_intervals().begin()).low;
+        auto version = (*req.range.iter_intervals().begin()).low.origin();
         auto packages = to_range(repo->packagesWithName(req.key));
 
-        for (auto package : packages) {
-            if (package->version() == version) {
-                auto reqs = to_range(package->requirements()) |
-                            transform([](const ptr<::Requirement> &req) {
-                                return adapter::Requirement(req);
-                            });
-                std::vector<adapter::Requirement> result;
-                std::ranges::copy(reqs, std::back_inserter(result));
-                return result;
-            }
-        }
+        auto it = std::ranges::find_if(packages, [&](const ptr<Package> &p) {
+            return p->version() == version;
+        });
 
-        assert(false && "Impossible?");
-        std::terminate();
+        if (it == packages.end())
+            throw std::runtime_error(fmt::format(
+                "Package with version {} not found",
+                fmt::streamed(*version)
+            ));
+
+        auto package = *it;
+        auto reqs = to_range(package->requirements()) |
+                    transform([](const ptr<::Requirement> &req) {
+                        return adapter::Requirement(req);
+                    });
+
+        return {reqs.begin(), reqs.end()};
     }
 };
 
