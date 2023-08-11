@@ -27,9 +27,9 @@ class MemRequirement : public Requirement {
               std::move(name), make<VersionOf>(low), make<VersionOf>(high)
           ) {}
 
-    auto name() -> std::string override { return _name; }
+    [[nodiscard]] auto name() const -> std::string override { return _name; }
 
-    auto low() -> ptr<Version> override { return _low; }
+    [[nodiscard]] auto low() const -> ptr<Version> override { return _low; }
 
-    auto high() -> ptr<Version> override { return _high; };
+    [[nodiscard]] auto high() const -> ptr<Version> override { return _high; };
 };

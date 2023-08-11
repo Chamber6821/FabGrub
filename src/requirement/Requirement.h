@@ -11,7 +11,7 @@
 
 class Requirement : public Interface {
   public:
-    virtual auto name() -> std::string = 0;
-    virtual auto low() -> ptr<Version> = 0;
-    virtual auto high() -> ptr<Version> = 0;
+    [[nodiscard]] virtual auto name() const -> std::string = 0;
+    [[nodiscard]] virtual auto low() const -> ptr<Version> = 0;
+    [[nodiscard]] virtual auto high() const -> ptr<Version> = 0;
 };
