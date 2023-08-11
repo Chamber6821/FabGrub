@@ -15,7 +15,9 @@ class MemProfile : public Profile {
     MemProfile(std::string name, ptr<Requirements> reqs)
         : _name(std::move(name)), reqs(std::move(reqs)) {}
 
-    auto name() -> std::string override { return _name; }
+    [[nodiscard]] auto name() const -> std::string override { return _name; }
 
-    auto requirements() -> ptr<Requirements> override { return reqs; }
+    [[nodiscard]] auto requirements() const -> ptr<Requirements> override {
+        return reqs;
+    }
 };

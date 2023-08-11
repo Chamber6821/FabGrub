@@ -11,6 +11,6 @@
 
 class Profile : public Interface {
   public:
-    virtual auto name() -> std::string = 0;
-    virtual auto requirements() -> ptr<Requirements> = 0;
+    [[nodiscard]] virtual auto name() const -> std::string = 0;
+    [[nodiscard]] virtual auto requirements() const -> ptr<Requirements> = 0;
 };
