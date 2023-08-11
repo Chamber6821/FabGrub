@@ -20,7 +20,11 @@ class MemDestination : public Destination, public Packages {
 
     void put(ptr<Package> package) override { packages.push_back(package); }
 
-    auto count() -> int override { return static_cast<int>(packages.size()); }
+    [[nodiscard]] auto count() const -> int override {
+        return static_cast<int>(packages.size());
+    }
 
-    auto at(int index) -> ptr<Package> override { return packages.at(index); }
+    [[nodiscard]] auto at(int index) const -> ptr<Package> override {
+        return packages.at(index);
+    }
 };

@@ -12,17 +12,18 @@ class MemList : public List<T> {
     std::vector<T> reqs;
 
   public:
-    explicit MemList(std::vector<T> reqs)
-        : reqs(std::move(reqs)) {}
+    explicit MemList(std::vector<T> reqs) : reqs(std::move(reqs)) {}
 
-    MemList(std::initializer_list<T> reqs)
-        : MemList(std::vector(reqs)) {}
+    MemList(std::initializer_list<T> reqs) : MemList(std::vector(reqs)) {}
 
     template <std::convertible_to<T>... Args>
-    explicit MemList(Args... args)
-        : MemList({args...}) {}
+    explicit MemList(Args... args) : MemList({args...}) {}
 
-    auto count() -> int override { return static_cast<int>(reqs.size()); };
+    [[nodiscard]] auto count() const -> int override {
+        return static_cast<int>(reqs.size());
+    };
 
-    auto at(int index) -> T override { return reqs.at(index); };
+    [[nodiscard]] auto at(int index) const -> T override {
+        return reqs.at(index);
+    };
 };

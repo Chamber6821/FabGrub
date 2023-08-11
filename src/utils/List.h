@@ -6,9 +6,9 @@
 
 #include "Reactions/misc/Interface.h"
 
-template<class T>
+template <class T>
 class List : public Interface {
   public:
-    virtual auto count() -> int = 0;
-    virtual auto at(int index) -> T = 0;
+    [[nodiscard]] virtual auto count() const -> int = 0;
+    [[nodiscard]] virtual auto at(int index) const -> T = 0;
 };
