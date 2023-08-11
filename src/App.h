@@ -7,6 +7,7 @@
 #include "adapter/pubgrub/Provider.h"
 #include "destination/Destination.h"
 #include "fmt/format.h"
+#include "fmt/ostream.h"
 #include "profile/Profiles.h"
 #include "pubgrub/solve.hpp"
 #include "repository/Repository.h"
@@ -49,20 +50,19 @@ class App {
 
         auto packages =
             solution | transform([&](const adapter::Requirement &req) {
-                auto versionString =
-                    (*req.range.iter_intervals().begin()).low.resurrect();
-                auto version = VersionOf(versionString);
+                auto version =
+                    (*req.range.iter_intervals().begin()).low.origin();
                 auto rangeWithPackage =
                     to_range(repository->packagesWithName(req.key)) |
                     filter([&](const ptr<Package> &package) {
-                        return *package->version() == version;
+                        return *package->version() == *version;
                     });
 
                 if (rangeWithPackage.empty())
                     throw std::runtime_error(fmt::format(
                         "Not found package for requirement {}:{}",
                         req.key,
-                        versionString
+                        fmt::streamed(*version)
                     ));
 
                 return *rangeWithPackage.begin();
