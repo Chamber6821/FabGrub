@@ -39,11 +39,15 @@ class MemPackage : public Package {
               std::move(name), version, make<MemRequirements>(), std::move(data)
           ) {}
 
-    auto name() -> std::string override { return _name; }
+    [[nodiscard]] auto name() const -> std::string override { return _name; }
 
-    auto version() -> ptr<Version> override { return _version; }
+    [[nodiscard]] auto version() const -> ptr<Version> override {
+        return _version;
+    }
 
-    auto requirements() -> ptr<Requirements> override { return _requirements; }
+    [[nodiscard]] auto requirements() const -> ptr<Requirements> override {
+        return _requirements;
+    }
 
-    auto data() -> std::string override { return _data; }
+    [[nodiscard]] auto data() const -> std::string override { return _data; }
 };
