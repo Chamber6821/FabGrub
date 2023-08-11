@@ -10,5 +10,6 @@
 
 class Repository : public Interface {
   public:
-    virtual auto packagesWithName(std::string name) -> ptr<Packages> = 0;
+    [[nodiscard]] virtual auto packagesWithName(std::string name) const
+        -> ptr<Packages> = 0;
 };
