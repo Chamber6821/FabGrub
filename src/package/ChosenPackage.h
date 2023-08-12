@@ -26,7 +26,7 @@ class ChosenPackage : public Package {
         return choice->element()->requirements();
     }
 
-    [[nodiscard]] auto data() const -> std::string override {
-        return choice->element()->data();
+    [[nodiscard]] auto file() const -> ptr<File> override {
+        return choice->element()->file();
     }
 };

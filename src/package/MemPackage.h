@@ -6,6 +6,7 @@
 
 #include "Package.h"
 #include "Reactions/misc/owning/make.h"
+#include "file/MemFile.h"
 #include "requirement/MemRequirements.h"
 #include "semver/VersionOf.h"
 
@@ -15,29 +16,34 @@ class MemPackage : public Package {
     std::string _name;
     ptr<Version> _version;
     ptr<Requirements> _requirements;
-    std::string _data;
+    ptr<File> _file;
 
   public:
     MemPackage(
         std::string name, ptr<Version> version, ptr<Requirements> requirements,
-        std::string data
+        ptr<File> file
     )
         : _name(std::move(name)), _version(std::move(version)),
-          _requirements(std::move(requirements)), _data(std::move(data)) {}
+          _requirements(std::move(requirements)), _file(std::move(file)) {}
 
     MemPackage(
         std::string name, const std::string &version,
-        ptr<Requirements> requirements, std::string data
+        ptr<Requirements> requirements, ptr<File> file
     )
         : MemPackage(
               std::move(name), make<VersionOf>(version),
-              std::move(requirements), std::move(data)
+              std::move(requirements), std::move(file)
           ) {}
 
-    MemPackage(std::string name, const std::string &version, std::string data)
+    MemPackage(std::string name, const std::string &version, ptr<File> file)
         : MemPackage(
-              std::move(name), version, make<MemRequirements>(), std::move(data)
+              std::move(name), version, make<MemRequirements>(), std::move(file)
           ) {}
+
+    MemPackage(
+        const std::string &name, const std::string &version, std::string data
+    )
+        : MemPackage(name, version, make<MemFile>(name, std::move(data))) {}
 
     [[nodiscard]] auto name() const -> std::string override { return _name; }
 
@@ -49,5 +55,5 @@ class MemPackage : public Package {
         return _requirements;
     }
 
-    [[nodiscard]] auto data() const -> std::string override { return _data; }
+    [[nodiscard]] auto file() const -> ptr<File> override { return _file; }
 };
