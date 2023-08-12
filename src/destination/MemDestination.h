@@ -5,8 +5,8 @@
 #pragma once
 
 #include "Destination.h"
-
 #include "package/Packages.h"
+#include "utils/range.h"
 #include <utility>
 
 class MemDestination : public Destination, public Packages {
@@ -18,7 +18,12 @@ class MemDestination : public Destination, public Packages {
 
     MemDestination() : MemDestination(std::vector<ptr<Package>>{}) {}
 
-    void put(ptr<Package> package) override { packages.push_back(package); }
+    void fill(ptr<Packages> filling) override {
+        std::ranges::copy(
+            to_range(filling),
+            std::back_inserter(this->packages)
+        );
+    }
 
     [[nodiscard]] auto count() const -> int override {
         return static_cast<int>(packages.size());
