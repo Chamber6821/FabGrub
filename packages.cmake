@@ -21,5 +21,5 @@ FetchContent_Declare(
 FetchContent_Declare(
         pubgrub
         GIT_REPOSITORY https://github.com/Chamber6821/pubgrub-cmake.git
-        GIT_TAG 0.3.1-cmake
+        GIT_TAG 0.3.2-cmake
 )
