@@ -7,6 +7,8 @@
 #include "Requirement.h"
 #include "fmt/format.h"
 #include "fmt/ostream.h"
+#include "package/ChosenPackage.h"
+#include "package/PackageWithVersion.h"
 #include "pubgrub/concepts.hpp"
 #include "repository/Repository.h"
 #include "utils/range.h"
@@ -17,6 +19,10 @@ namespace adapter {
 
 class Provider {
     ptr<Repository> repo;
+
+    static auto origin(const adapter::Requirement &requirement) {
+        return (*requirement.range.iter_intervals().begin()).low.origin();
+    }
 
   public:
     explicit Provider(ptr<Repository> repo) : repo(std::move(repo)) {}
@@ -47,20 +53,11 @@ class Provider {
         -> std::vector<adapter::Requirement> {
         using namespace std::views;
 
-        auto version = (*req.range.iter_intervals().begin()).low.origin();
-        auto packages = to_range(repo->packagesWithName(req.key));
+        auto package = make<PackageWithVersion>(
+            repo->packagesWithName(req.key),
+            origin(req)
+        );
 
-        auto it = std::ranges::find_if(packages, [&](const ptr<Package> &p) {
-            return p->version() == version;
-        });
-
-        if (it == packages.end())
-            throw std::runtime_error(fmt::format(
-                "Package with version {} not found",
-                fmt::streamed(*version)
-            ));
-
-        auto package = *it;
         auto reqs = to_range(package->requirements()) |
                     transform([](const ptr<::Requirement> &req) {
                         return adapter::Requirement(req);
