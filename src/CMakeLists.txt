@@ -21,3 +21,6 @@ target_link_libraries(${TARGET} PUBLIC Reactions::Reactions)
 
 FetchContent_MakeAvailable(pubgrub)
 target_link_libraries(${TARGET} PUBLIC pubgrub::pubgrub)
+
+FetchContent_MakeAvailable(cpr)
+target_link_libraries(${TARGET} PUBLIC cpr::cpr)

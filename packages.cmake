@@ -23,3 +23,9 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/Chamber6821/pubgrub-cmake.git
         GIT_TAG 0.3.2-cmake
 )
+
+FetchContent_Declare(
+        cpr
+        GIT_REPOSITORY https://github.com/libcpr/cpr.git
+        GIT_TAG d7cec83e9480253bacf11ff6441e9d00c08c71bf # Fix for branch "1.10.x"
+)
