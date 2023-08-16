@@ -29,3 +29,9 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/libcpr/cpr.git
         GIT_TAG d7cec83e9480253bacf11ff6441e9d00c08c71bf # Fix for branch "1.10.x"
 )
+
+FetchContent_Declare(
+        nlohmann_json
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+        GIT_TAG v3.11.2
+)

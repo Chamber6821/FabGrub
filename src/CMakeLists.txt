@@ -20,3 +20,6 @@ target_link_libraries(${TARGET} PUBLIC pubgrub::pubgrub)
 
 FetchContent_MakeAvailable(cpr)
 target_link_libraries(${TARGET} PUBLIC cpr::cpr)
+
+FetchContent_MakeAvailable(nlohmann_json)
+target_link_libraries(${TARGET} PUBLIC nlohmann_json::nlohmann_json)
