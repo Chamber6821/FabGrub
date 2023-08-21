@@ -30,6 +30,11 @@ class Version {
     auto operator<=>(const Version &other) const {
         return *version <=> *other.version;
     };
+
+    friend auto operator<<(std::ostream &out, const Version &v)
+        -> std::ostream & {
+        return out << *v.version;
+    }
 };
 
 static_assert(std::totally_ordered<Version>);

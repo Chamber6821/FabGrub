@@ -30,17 +30,21 @@ class Requirement {
     Requirement(std::string key, version_range_type range)
         : key(std::move(key)), range(std::move(range)) {}
 
+    explicit Requirement(std::string key)
+        : Requirement(std::move(key), version_range_type{}) {}
+
     Requirement(std::string key, const ptr<::Version> &version)
         : Requirement(
               std::move(key), {adapter::Version(version),
                                adapter::Version(make<NextPatch>(version))}
           ) {}
 
-    explicit Requirement(const ptr<::Requirement> &req)
-        : Requirement(
-              req->name(),
-              {adapter::Version(req->low()), adapter::Version(req->high())}
-          ) {}
+    explicit Requirement(const ptr<::Requirement> &req) : key(req->name()) {
+        if (*req->low() < *req->high())
+            range = {
+                adapter::Version(req->low()),
+                adapter::Version(req->high())};
+    }
 
     explicit Requirement(const in<Package> &package)
         : Requirement(package->name(), package->version()) {}
@@ -92,6 +96,11 @@ class Requirement {
         if (self) {
             out.value("{}@{}", self->key, out.repr_value(self->range));
         }
+    }
+
+    friend auto operator<<(std::ostream &out, const adapter::Requirement &r)
+        -> std::ostream & {
+        return out << r.key << '(' << r.range << ')';
     }
 };
 
