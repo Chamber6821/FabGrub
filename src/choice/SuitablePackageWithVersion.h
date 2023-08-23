@@ -19,7 +19,7 @@ class SuitablePackageWithVersion : public SuitableChoice<ptr<Package>> {
     SuitablePackageWithVersion(ptr<Packages> packages, ptr<Version> version)
         : version(std::move(version)),
           SuitableChoice(std::move(packages), [this](const ptr<Package> &p) {
-              return p->version() == this->version;
+              return *p->version() == *this->version;
           }) {}
 
     [[nodiscard]] auto element() const -> ptr<Package> override {
