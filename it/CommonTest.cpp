@@ -4,12 +4,15 @@
 
 #include "destination/MemDestination.h"
 #include "doctest-nolint.h"
+#include "file/FakeFile.h"
 #include "http/HttpClient.h"
 #include "http/LoggedHttp.h"
+#include "http/MemCachedHttp.h"
 #include "log/ForkedLog.h"
 #include "log/StreamLog.h"
 #include "package/MemPackage.h"
 #include "repository/MemRepository.h"
+#include "repository/OverloadedRepository.h"
 #include "repository/re146/Repository.h"
 #include "requirement/MemRequirement.h"
 #include "solution/PubgrubSolution.h"
@@ -45,12 +48,18 @@ TEST_SUITE("Common integration test") {
                 make<PubgrubSolution>(
                     make<MemRequirements>(make<MemRequirement>(
                         "space-exploration",
-                        "1.0.0",
-                        "2.0.0"
+                        "0.0.0",
+                        "1.0.0"
                     )),
-                    make<MemCachedRepository>(make<Re146Repository>(
-                        make<LoggedHttp>(make<HttpClient>(), log)
-                    ))
+                    make<OverloadedRepository>(
+                        make<re146::Repository>(make<MemCachedHttp>(
+                            make<LoggedHttp>(make<HttpClient>(), log)
+                        )),
+                        "base",
+                        make<MemPackages>(
+                            make<MemPackage>("base", "1.1.80", make<FakeFile>())
+                        )
+                    )
                 )
                     ->packages()
             );
