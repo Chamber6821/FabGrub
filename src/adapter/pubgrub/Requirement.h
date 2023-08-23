@@ -100,7 +100,10 @@ class Requirement {
 
     friend auto operator<<(std::ostream &out, const adapter::Requirement &r)
         -> std::ostream & {
-        return out << r.key << '(' << r.range << ')';
+        out << r.key << ' ';
+        if (r.range.empty()) out << "<empty>";
+        else out << r.range;
+        return out;
     }
 };
 
