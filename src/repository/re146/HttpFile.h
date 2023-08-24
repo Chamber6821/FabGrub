@@ -31,7 +31,7 @@ class HttpFile : public File {
             const auto url = fmt::format(
                 "https://mods-storage.re146.dev/{}/{}.zip",
                 name,
-                fmt::streamed(version)
+                fmt::streamed(*version)
             );
 
             std::ofstream(directory / filename) << http->content(url);
