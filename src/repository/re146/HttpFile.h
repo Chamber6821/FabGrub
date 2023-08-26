@@ -10,6 +10,7 @@
 #include "http/Http.h"
 #include "semver/Version.h"
 #include "utils/ptr.h"
+#include <iostream>
 #include <utility>
 
 namespace re146 {
@@ -34,7 +35,8 @@ class HttpFile : public File {
                 fmt::streamed(*version)
             );
 
-            std::ofstream(directory / filename) << http->content(url);
+            std::ofstream(directory / filename, std::ofstream::binary)
+                << http->content(url);
         } catch (...) {
             std::throw_with_nested(std::runtime_error(fmt::format(
                 "Failed save {}:{} to {}",
