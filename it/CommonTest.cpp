@@ -36,38 +36,48 @@ auto stringify(const std::exception &e, int level) -> std::string {
 
 TEST_SUITE("Common integration test") {
     TEST_CASE("") {
-        auto output = std::shared_ptr<std::ostream>(
-            std::shared_ptr<std::nullptr_t>(),
-            &std::cout
-        );
         auto log = make<ForkedLog>(
-            make<StreamLog>(output),
+            make<StreamLog>(std::shared_ptr<std::ostream>(
+                std::shared_ptr<std::nullptr_t>(),
+                &std::cout
+            )),
             make<StreamLog>(make<std::ofstream>("log.txt"))
         );
+        auto http = make<LoggedHttp>(make<HttpClient>(), log);
+        auto basePackage = make<MemPackage>("base", "1.1.80");
 
         try {
-            make<LoggedDestination>(make<DestinationDirectory>("mods"), log)
-                ->fill(make<PubgrubSolution>(
-                           make<MemRequirements>(make<MemRequirement>(
-                               "space-exploration",
-                               "0.0.0",
-                               "1.0.0"
-                           )),
-                           make<OverloadedRepository>(
-                               make<re146::Repository>(make<MemCachedHttp>(
-                                   make<LoggedHttp>(make<HttpClient>(), log)
-                               )),
-                               "base",
-                               make<MemPackages>(make<MemPackage>(
-                                   "base",
-                                   "1.1.80",
-                                   make<FakeFile>()
-                               ))
-                           )
-                )
-                           ->packages());
+            make<LoggedDestination>(
+                make<DestinationDirectory>(
+                    "mods",
+                    make<OverloadedFileRepository>(
+                        basePackage,
+                        make<FakeFile>(),
+                        make<FileCachedFileRepository>(
+                            "mods-cached",
+                            make<re146::FileRepository>(http)
+                        )
+                    )
+                ),
+                log
+            )
+                ->fill(
+                    make<PubgrubSolution>(
+                        make<MemRequirements>(make<MemRequirement>(
+                            "space-exploration",
+                            "0.0.0",
+                            "1.0.0"
+                        )),
+                        make<OverloadedRepository>(
+                            make<re146::Repository>(make<MemCachedHttp>(http)),
+                            "base",
+                            make<MemPackages>(basePackage)
+                        )
+                    )
+                        ->packages()
+                );
         } catch (const std::exception &e) {
-            std::cout << stringify(e, 0) << '\n';
+            log->info("{}", stringify(e, 0));
             throw e;
         }
     }
