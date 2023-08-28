@@ -25,8 +25,4 @@ class ChosenPackage : public Package {
     [[nodiscard]] auto requirements() const -> ptr<Requirements> override {
         return choice->element()->requirements();
     }
-
-    [[nodiscard]] auto file() const -> ptr<File> override {
-        return choice->element()->file();
-    }
 };

@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "HttpFile.h"
 #include "JsonReqirements.h"
 #include "Reactions/misc/owning/make.h"
 #include "nlohmann/json.hpp"
@@ -17,11 +16,10 @@ namespace re146 {
 class JsonPackage : public Package {
     std::string _name;
     nlohmann::json json;
-    ptr<Http> http;
 
   public:
-    JsonPackage(std::string name, nlohmann::json json, ptr<Http> http)
-        : _name(std::move(name)), json(std::move(json)), http(std::move(http)) {
+    JsonPackage(std::string name, nlohmann::json json)
+        : _name(std::move(name)), json(std::move(json)) {
     }
 
     [[nodiscard]] auto name() const -> std::string override { return _name; }
@@ -32,10 +30,6 @@ class JsonPackage : public Package {
 
     [[nodiscard]] auto requirements() const -> ptr<Requirements> override {
         return make<JsonRequirements>(json["info_json"]["dependencies"]);
-    }
-
-    [[nodiscard]] auto file() const -> ptr<File> override {
-        return make<HttpFile>(name(), version(), http);
     }
 };
 

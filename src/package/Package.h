@@ -16,5 +16,4 @@ class Package : public Interface {
     [[nodiscard]] virtual auto name() const -> std::string = 0;
     [[nodiscard]] virtual auto version() const -> ptr<Version> = 0;
     [[nodiscard]] virtual auto requirements() const -> ptr<Requirements> = 0;
-    [[nodiscard]] virtual auto file() const -> ptr<File> = 0;
 };

@@ -20,7 +20,7 @@ class Repository : public ::Repository {
     [[nodiscard]] auto packagesWithName(std::string name) const
         -> ptr<Packages> override {
         const auto url = "https://re146.dev/factorio/mods/modinfo?id=" + name;
-        return make<JsonPackages>(http->content(url), http);
+        return make<JsonPackages>(http->content(url));
     }
 };
 
