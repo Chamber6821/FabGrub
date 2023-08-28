@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "FactorioReqirement.h"
 #include "nlohmann/json.hpp"
+#include "requirement/FactorioReqirement.h"
 #include "requirement/MemRequirement.h"
 #include "requirement/MemRequirements.h"
 #include "utils/range.h"

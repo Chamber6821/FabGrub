@@ -13,9 +13,9 @@
 #include "log/ForkedLog.h"
 #include "log/StreamLog.h"
 #include "package/MemPackage.h"
+#include "re146/Repository.h"
 #include "repository/MemRepository.h"
 #include "repository/OverloadedRepository.h"
-#include "repository/re146/Repository.h"
 #include "requirement/MemRequirement.h"
 #include "solution/PubgrubSolution.h"
 
