@@ -6,15 +6,15 @@
 
 #include "File.h"
 #include <fstream>
+#include <utility>
 
 class MemFile : public File {
-    std::string name;
     std::string data;
 
   public:
-    MemFile(std::string name, std::string data) : name(name), data(data) {}
+    explicit MemFile(std::string data) : data(std::move(data)) {}
 
-    void saveTo(std::filesystem::path directory) override {
-        std::ofstream(directory / name) << data;
+    void saveTo(std::filesystem::path filepath) override {
+        std::ofstream(filepath) << data;
     }
 };

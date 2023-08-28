@@ -9,5 +9,5 @@
 
 class File : public Interface {
   public:
-    virtual void saveTo(std::filesystem::path directory) = 0;
+    virtual void saveTo(std::filesystem::path filepath) = 0;
 };

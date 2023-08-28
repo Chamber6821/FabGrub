@@ -8,7 +8,7 @@
 
 class FakeFile : public File {
   public:
-    void saveTo(std::filesystem::path directory) override {
+    void saveTo(std::filesystem::path filepath) override {
         // nothing
     }
 };

@@ -14,6 +14,14 @@ class DestinationDirectory : public Destination {
     std::filesystem::path dir;
     ptr<FileRepository> repo;
 
+    static auto filename(const ptr<Package> &p) -> std::string {
+        return fmt::format(
+            "{}_{}.zip",
+            p->name(),
+            fmt::streamed(*p->version())
+        );
+    }
+
   public:
     explicit DestinationDirectory(
         std::filesystem::path dir, ptr<FileRepository> repo
@@ -24,7 +32,7 @@ class DestinationDirectory : public Destination {
         try {
             std::filesystem::create_directories(dir);
             for (auto p : to_range(filling)) {
-                repo->fileFor(p)->saveTo(dir);
+                repo->fileFor(p)->saveTo(dir / filename(p));
             }
         } catch (...) {
             std::throw_with_nested(std::runtime_error(fmt::format(
