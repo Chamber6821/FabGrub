@@ -16,4 +16,8 @@ class Package : public Interface {
     [[nodiscard]] virtual auto name() const -> std::string = 0;
     [[nodiscard]] virtual auto version() const -> ptr<Version> = 0;
     [[nodiscard]] virtual auto requirements() const -> ptr<Requirements> = 0;
+
+    auto operator==(const Package &other) const {
+        return name() == other.name() and version() == other.version();
+    }
 };
