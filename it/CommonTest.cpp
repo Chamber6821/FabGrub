@@ -50,35 +50,35 @@ TEST_SUITE("Common integration test") {
         log->info("Current locale: {}", std::setlocale(LC_ALL, nullptr));
 
         try {
-            make<LoggedDestination>(
-                make<DestinationDirectory>(
-                    "mods",
-                    make<OverloadedFileRepository>(
-                        basePackage,
-                        make<FakeFile>(),
-                        make<FileCachedFileRepository>(
-                            "mods-cached",
-                            make<re146::FileRepository>(http)
+            make<SequencialFilling>(
+                make<LoggedDestination>(
+                    make<DestinationDirectory>(
+                        "mods",
+                        make<OverloadedFileRepository>(
+                            basePackage,
+                            make<FakeFile>(),
+                            make<FileCachedFileRepository>(
+                                "mods-cached",
+                                make<re146::FileRepository>(http)
+                            )
                         )
-                    )
+                    ),
+                    log
                 ),
-                log
-            )
-                ->fill(
-                    make<PubgrubSolution>(
-                        make<MemRequirements>(make<MemRequirement>(
-                            "space-exploration",
-                            "0.0.0",
-                            "1.0.0"
-                        )),
-                        make<OverloadedRepository>(
-                            make<re146::Repository>(make<MemCachedHttp>(http)),
-                            "base",
-                            make<MemPackages>(basePackage)
-                        )
+                make<PubgrubSolution>(
+                    make<MemRequirements>(make<MemRequirement>(
+                        "space-exploration",
+                        "0.0.0",
+                        "1.0.0"
+                    )),
+                    make<OverloadedRepository>(
+                        make<re146::Repository>(make<MemCachedHttp>(http)),
+                        "base",
+                        make<MemPackages>(basePackage)
                     )
-                        ->packages()
-                );
+                )
+            )
+                ->fill();
         } catch (const std::exception &e) {
             log->info("{}", stringify(e, 0));
             throw e;
