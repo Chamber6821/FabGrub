@@ -18,7 +18,7 @@ class LoggedDestination : public Destination {
         : origin(std::move(origin)), log(std::move(log)) {}
 
     void put(ptr<Package> filling) override {
-        log->info("Add ", fmt::streamed(*filling));
+        log->info("Add {}", fmt::streamed(*filling));
         origin->put(std::move(filling));
     }
 };
