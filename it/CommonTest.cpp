@@ -4,8 +4,9 @@
 
 #include "destination/DestinationDirectory.h"
 #include "destination/LoggedDestination.h"
-#include "destination/MemDestination.h"
 #include "doctest-nolint.h"
+#include "file-repository/FileCachedFileRepository.h"
+#include "file-repository/OverloadedFileRepository.h"
 #include "file/FakeFile.h"
 #include "http/HttpClient.h"
 #include "http/LoggedHttp.h"
@@ -13,10 +14,10 @@
 #include "log/ForkedLog.h"
 #include "log/StreamLog.h"
 #include "package/MemPackage.h"
+#include "re146/FileRepository.h"
 #include "re146/Repository.h"
 #include "repository/MemRepository.h"
 #include "repository/OverloadedRepository.h"
-#include "requirement/MemRequirement.h"
 #include "solution/PubgrubSolution.h"
 
 auto operator<<(std::ostream &out, const Package &p) -> std::ostream & {
@@ -45,6 +46,12 @@ TEST_SUITE("Common integration test") {
         );
         auto http = make<LoggedHttp>(make<HttpClient>(), log);
         auto basePackage = make<MemPackage>("base", "1.1.80");
+
+        // fixes text of std::filesystem::filesystem_error
+        // NOLINTNEXTLINE(*-mt-unsafe)
+        (void)std::setlocale(LC_ALL, "");
+        // NOLINTNEXTLINE(*-mt-unsafe)
+        log->info("Current locale: {}", std::setlocale(LC_ALL, nullptr));
 
         try {
             make<LoggedDestination>(
