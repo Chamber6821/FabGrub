@@ -8,7 +8,6 @@
 #include "file-repository/FileRepository.h"
 #include "fmt/format.h"
 #include "fmt/ostream.h"
-#include "utils/range.h"
 
 class DestinationDirectory : public Destination {
     std::filesystem::path dir;
@@ -28,15 +27,14 @@ class DestinationDirectory : public Destination {
     )
         : dir(std::move(dir)), repo(std::move(repo)) {}
 
-    void fill(ptr<Packages> filling) override {
+    void put(ptr<Package> filling) override {
         try {
             std::filesystem::create_directories(dir);
-            for (auto p : to_range(filling)) {
-                repo->fileFor(p)->saveTo(dir / filename(p));
-            }
+            repo->fileFor(filling)->saveTo(dir / filename(filling));
         } catch (...) {
             std::throw_with_nested(std::runtime_error(fmt::format(
-                "Failed while fill directory {}",
+                "Failed while put file for package {} to {}",
+                fmt::streamed(*filling),
                 fmt::streamed(dir)
             )));
         }

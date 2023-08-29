@@ -5,9 +5,9 @@
 #pragma once
 
 #include "Reactions/misc/Interface.h"
-#include "package/Packages.h"
+#include "package/Package.h"
 
 class Destination : public Interface {
   public:
-    virtual void fill(ptr<Packages> filling) = 0;
+    virtual void put(ptr<Package> filling) = 0;
 };

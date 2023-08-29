@@ -7,7 +7,6 @@
 #include "Destination.h"
 #include "fmt/ostream.h"
 #include "log/Log.h"
-#include "utils/range.h"
 #include <utility>
 
 class LoggedDestination : public Destination {
@@ -18,14 +17,8 @@ class LoggedDestination : public Destination {
     LoggedDestination(ptr<Destination> origin, ptr<Log> log)
         : origin(std::move(origin)), log(std::move(log)) {}
 
-    void fill(ptr<Packages> filling) override {
-        for (auto p : to_range(filling)) {
-            log->info(
-                "Chosen {}:{}",
-                p->name(),
-                fmt::streamed(*p->version())
-            );
-        }
-        origin->fill(std::move(filling));
+    void put(ptr<Package> filling) override {
+        log->info("Add ", fmt::streamed(*filling));
+        origin->put(std::move(filling));
     }
 };
