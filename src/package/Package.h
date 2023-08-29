@@ -20,4 +20,9 @@ class Package : public Interface {
     auto operator==(const Package &other) const {
         return name() == other.name() and version() == other.version();
     }
+
+    friend auto operator<<(std::ostream &out, const Package &v)
+        -> std::ostream & {
+        return out << v.name() << '.' << *v.version();
+    }
 };

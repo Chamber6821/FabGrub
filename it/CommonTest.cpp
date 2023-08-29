@@ -20,10 +20,6 @@
 #include "repository/OverloadedRepository.h"
 #include "solution/PubgrubSolution.h"
 
-auto operator<<(std::ostream &out, const Package &p) -> std::ostream & {
-    return out << fmt::format("{}:{}", p.name(), fmt::streamed(*p.version()));
-}
-
 // NOLINTNEXTLINE(*-no-recursion)
 auto stringify(const std::exception &e, int level) -> std::string {
     auto part = std::string(level, ' ') + "exception: " + e.what() + '\n';
