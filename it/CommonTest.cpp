@@ -14,6 +14,7 @@
 #include "http/MemCachedHttp.h"
 #include "log/ForkedLog.h"
 #include "log/StreamLog.h"
+#include "log/SynchronizedLog.h"
 #include "package/MemPackage.h"
 #include "re146/FileRepository.h"
 #include "re146/Repository.h"
@@ -34,13 +35,13 @@ auto stringify(const std::exception &e, int level) -> std::string {
 
 TEST_SUITE("Common integration test") {
     TEST_CASE("") {
-        auto log = make<ForkedLog>(
+        auto log = make<SynchronizedLog>(make<ForkedLog>(
             make<StreamLog>(std::shared_ptr<std::ostream>(
                 std::shared_ptr<std::nullptr_t>(),
                 &std::cout
             )),
             make<StreamLog>(make<std::ofstream>("log.txt"))
-        );
+        ));
         auto http = make<LoggedHttp>(make<HttpClient>(), log);
         auto basePackage = make<MemPackage>("base", "1.1.80");
         auto app = make<SequentialFilling>(
