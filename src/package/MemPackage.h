@@ -24,6 +24,11 @@ class MemPackage : public Package {
         : _name(std::move(name)), _version(std::move(version)),
           _requirements(std::move(requirements)) {}
 
+    MemPackage(std::string name, ptr<Version> version)
+        : MemPackage(
+              std::move(name), std::move(version), make<MemRequirements>()
+          ) {}
+
     MemPackage(
         std::string name, const std::string &version,
         ptr<Requirements> requirements
