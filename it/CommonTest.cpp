@@ -17,12 +17,12 @@
 #include "log/SynchronizedLog.h"
 #include "package/MemPackage.h"
 #include "profile/JsonProfile.h"
-#include "profile/MemProfile.h"
 #include "re146/FileRepository.h"
 #include "re146/Repository.h"
 #include "repository/MemRepository.h"
 #include "repository/OverloadedRepository.h"
 #include "scalar/JsonFromFile.h"
+#include "solution/FileCachedSolution.h"
 #include "solution/PubgrubSolution.h"
 
 // NOLINTNEXTLINE(*-no-recursion)
@@ -38,8 +38,6 @@ auto stringify(const std::exception &e, int level) -> std::string {
 
 TEST_SUITE("Common integration test") {
     TEST_CASE("") {
-        auto profileName = std::string_view("test");
-
         auto log = make<SynchronizedLog>(make<ForkedLog>(
             make<StreamLog>(std::shared_ptr<std::ostream>(
                 std::shared_ptr<std::nullptr_t>(),
@@ -47,21 +45,28 @@ TEST_SUITE("Common integration test") {
             )),
             make<StreamLog>(make<std::ofstream>("log.txt"))
         ));
-        auto http = make<LoggedHttp>(log, make<HttpClient>());
-        auto profile = make<JsonProfile>(
-            make<JsonFromFile>(fmt::format("profiles/{}.json", profileName))
-        );
 
         try {
+            auto profileName = std::string_view("test");
+            auto profileFile = std::filesystem::path(
+                fmt::format("profiles/{}.json", profileName)
+            );
+            auto profile = make<JsonProfile>(make<JsonFromFile>(profileFile));
+
             // fixes text of std::filesystem::filesystem_error
             // NOLINTNEXTLINE(*-mt-unsafe)
             (void)std::setlocale(LC_ALL, "");
             // NOLINTNEXTLINE(*-mt-unsafe)
             log->info("Current locale: {}", std::setlocale(LC_ALL, nullptr));
             log->info("Chosen profile: {}", profileName);
+            log->info(
+                "Chosen Factorio version: {}",
+                fmt::streamed(*profile->factorioVersion())
+            );
 
             auto basePackage =
                 make<MemPackage>("base", profile->factorioVersion());
+            auto http = make<LoggedHttp>(log, make<HttpClient>());
             auto app = make<SequentialFilling>(
                 make<LoggedDestination>(
                     log,
@@ -78,7 +83,8 @@ TEST_SUITE("Common integration test") {
                     )
                 ),
                 make<FileCachedSolution>(
-                    fmt::format("profiles/{}.json.lock", profileName),
+                    std::filesystem::last_write_time(profileFile),
+                    fmt::format("profiles/{}.lock.json", profileName),
                     make<PubgrubSolution>(
                         profile->requirements(),
                         make<OverloadedRepository>(
