@@ -43,7 +43,7 @@ TEST_SUITE("Common integration test") {
             )),
             make<StreamLog>(make<std::ofstream>("log.txt"))
         ));
-        auto http = make<LoggedHttp>(make<HttpClient>(), log);
+        auto http = make<LoggedHttp>(log, make<HttpClient>());
         auto profile = make<MemProfile>(
             "test",
             make<VersionOf>("1.1.80"),
@@ -54,6 +54,7 @@ TEST_SUITE("Common integration test") {
         auto basePackage = make<MemPackage>("base", profile->factorioVersion());
         auto app = make<SequentialFilling>(
             make<LoggedDestination>(
+                log,
                 make<DestinationDirectory>(
                     "mods",
                     make<OverloadedFileRepository>(
@@ -64,15 +65,14 @@ TEST_SUITE("Common integration test") {
                             make<re146::FileRepository>(http)
                         )
                     )
-                ),
-                log
+                )
             ),
             make<PubgrubSolution>(
                 profile->requirements(),
                 make<OverloadedRepository>(
-                    make<re146::Repository>(make<MemCachedHttp>(http)),
                     basePackage->name(),
-                    make<MemPackages>(basePackage)
+                    make<MemPackages>(basePackage),
+                    make<re146::Repository>(make<MemCachedHttp>(http))
                 )
             )
         );

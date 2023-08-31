@@ -9,15 +9,16 @@
 #include "utils/ptr.h"
 
 class LoggedHttp : public Http {
-    ptr<Http> http;
     ptr<Log> log;
+    ptr<Http> origin;
 
   public:
-    LoggedHttp(ptr<Http> http, ptr<Log> log)
-        : http(std::move(http)), log(std::move(log)) {}
+    LoggedHttp(ptr<Log> log, ptr<Http> http)
+        : log(std::move(log)), origin(std::move(http)) {}
 
-    [[nodiscard]] auto content(const std::string &url) const -> std::string override {
+    [[nodiscard]] auto content(const std::string &url) const
+        -> std::string override {
         log->info("Get: {}", url);
-        return http->content(url);
+        return origin->content(url);
     }
 };

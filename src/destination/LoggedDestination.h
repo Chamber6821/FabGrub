@@ -10,12 +10,12 @@
 #include <utility>
 
 class LoggedDestination : public Destination {
-    ptr<Destination> origin;
     ptr<Log> log;
+    ptr<Destination> origin;
 
   public:
-    LoggedDestination(ptr<Destination> origin, ptr<Log> log)
-        : origin(std::move(origin)), log(std::move(log)) {}
+    LoggedDestination(ptr<Log> log, ptr<Destination> origin)
+        : log(std::move(log)), origin(std::move(origin)) {}
 
     void put(ptr<Package> filling) override {
         log->info("Add {}", fmt::streamed(*filling));
