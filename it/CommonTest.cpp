@@ -16,6 +16,7 @@
 #include "log/StreamLog.h"
 #include "log/SynchronizedLog.h"
 #include "package/MemPackage.h"
+#include "profile/MemProfile.h"
 #include "re146/FileRepository.h"
 #include "re146/Repository.h"
 #include "repository/MemRepository.h"
@@ -43,7 +44,14 @@ TEST_SUITE("Common integration test") {
             make<StreamLog>(make<std::ofstream>("log.txt"))
         ));
         auto http = make<LoggedHttp>(make<HttpClient>(), log);
-        auto basePackage = make<MemPackage>("base", "1.1.80");
+        auto profile = make<MemProfile>(
+            "test",
+            make<VersionOf>("1.1.80"),
+            make<MemRequirements>(
+                make<FactorioRequirement>("space-exploration >= 0.0.0")
+            )
+        );
+        auto basePackage = make<MemPackage>("base", profile->factorioVersion());
         auto app = make<SequentialFilling>(
             make<LoggedDestination>(
                 make<DestinationDirectory>(
@@ -60,12 +68,10 @@ TEST_SUITE("Common integration test") {
                 log
             ),
             make<PubgrubSolution>(
-                make<MemRequirements>(
-                    make<MemRequirement>("space-exploration", "0.0.0", "1.0.0")
-                ),
+                profile->requirements(),
                 make<OverloadedRepository>(
                     make<re146::Repository>(make<MemCachedHttp>(http)),
-                    "base",
+                    basePackage->name(),
                     make<MemPackages>(basePackage)
                 )
             )
@@ -77,6 +83,7 @@ TEST_SUITE("Common integration test") {
             (void)std::setlocale(LC_ALL, "");
             // NOLINTNEXTLINE(*-mt-unsafe)
             log->info("Current locale: {}", std::setlocale(LC_ALL, nullptr));
+            log->info("Chosen profile: {}", profile->name());
 
             (*app)();
         } catch (const std::exception &e) {
