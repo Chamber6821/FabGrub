@@ -23,6 +23,6 @@ class Package : public Interface {
 
     friend auto operator<<(std::ostream &out, const Package &v)
         -> std::ostream & {
-        return out << v.name() << '.' << *v.version();
+        return out << v.name() << ':' << *v.version();
     }
 };
