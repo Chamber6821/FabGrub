@@ -9,15 +9,23 @@
 
 class MemProfile : public Profile {
     std::string _name;
-    ptr<Requirements> reqs;
+    ptr<Version> _factorioVersion;
+    ptr<Requirements> _requirements;
 
   public:
-    MemProfile(std::string name, ptr<Requirements> reqs)
-        : _name(std::move(name)), reqs(std::move(reqs)) {}
+    MemProfile(
+        std::string name, ptr<Version> factorioVersion, ptr<Requirements> reqs
+    )
+        : _name(std::move(name)), _factorioVersion(std::move(factorioVersion)),
+          _requirements(std::move(reqs)) {}
 
     [[nodiscard]] auto name() const -> std::string override { return _name; }
 
+    auto factorioVersion() const -> ptr<Version> override {
+        return _factorioVersion;
+    }
+
     [[nodiscard]] auto requirements() const -> ptr<Requirements> override {
-        return reqs;
+        return _requirements;
     }
 };
