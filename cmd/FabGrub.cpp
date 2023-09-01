@@ -45,7 +45,9 @@ auto get_locale() -> std::string_view {
     return std::setlocale(LC_ALL, nullptr); // NOLINT(*-mt-unsafe)
 }
 
-auto main(int argc, char *argv[]) -> int {
+auto main(int argc, char **argv) -> int {
+    auto args = std::span(argv, size_t(argc));
+
     auto rootFolder = std::filesystem::path("fabgrub");
     auto profilesFolder = rootFolder / "profiles";
 
@@ -59,14 +61,14 @@ auto main(int argc, char *argv[]) -> int {
         log->info("Current locale: {}", get_locale());
 
         conditionalThrow(
-            argc == 2,
+            args.size() == 2,
             fmt::format(
                 "FabGrub expect one console argument, but got {}",
-                argc - 1
+                args.size() - 1
             )
         );
 
-        auto profileName = std::string_view(argv[1]);
+        auto profileName = std::string_view(args[1]);
         auto profileFile = profilesFolder / fmt::format("{}.json", profileName);
         auto profile = make<JsonProfile>(make<JsonFromFile>(profileFile));
         log->info("Chosen profile: {}", profileName);
