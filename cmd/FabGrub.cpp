@@ -37,6 +37,14 @@ void conditionalThrow(bool condition, const std::string &message) {
     if (not condition) throw std::runtime_error(message);
 }
 
+void set_locale(const char *locale) {
+    (void)std::setlocale(LC_ALL, locale); // NOLINT(*-mt-unsafe)
+}
+
+auto get_locale() -> std::string_view {
+    return std::setlocale(LC_ALL, nullptr); // NOLINT(*-mt-unsafe)
+}
+
 auto main(int argc, char *argv[]) -> int {
     auto rootFolder = std::filesystem::path("fabgrub");
     auto profilesFolder = rootFolder / "profiles";
@@ -47,6 +55,9 @@ auto main(int argc, char *argv[]) -> int {
     ));
 
     try {
+        set_locale("");
+        log->info("Current locale: {}", get_locale());
+
         conditionalThrow(
             argc == 2,
             fmt::format(
@@ -58,12 +69,6 @@ auto main(int argc, char *argv[]) -> int {
         auto profileName = std::string_view(argv[1]);
         auto profileFile = profilesFolder / fmt::format("{}.json", profileName);
         auto profile = make<JsonProfile>(make<JsonFromFile>(profileFile));
-
-        // fixes text of std::filesystem::filesystem_error
-        // NOLINTNEXTLINE(*-mt-unsafe)
-        (void)std::setlocale(LC_ALL, "");
-        // NOLINTNEXTLINE(*-mt-unsafe)
-        log->info("Current locale: {}", std::setlocale(LC_ALL, nullptr));
         log->info("Chosen profile: {}", profileName);
         log->info(
             "Chosen Factorio version: {}",
