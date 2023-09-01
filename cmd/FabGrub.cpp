@@ -1,3 +1,4 @@
+#include "action/ProtectedFolder.h"
 #include "action/SequentialFilling.h"
 #include "destination/DestinationDirectory.h"
 #include "destination/LoggedDestination.h"
@@ -41,7 +42,7 @@ auto main(int argc, char *argv[]) -> int {
             std::shared_ptr<std::nullptr_t>(),
             &std::cout
         )),
-        make<StreamLog>(make<std::ofstream>("log.txt"))
+        make<StreamLog>(make<std::ofstream>("fabgrub-log.txt"))
     ));
 
     try {
@@ -53,9 +54,11 @@ auto main(int argc, char *argv[]) -> int {
             )
         );
 
+        auto rootFolder = std::filesystem::path("fabgrub");
+        auto profilesFolder = rootFolder / "profiles";
+
         auto profileName = std::string_view(argv[1]);
-        auto profileFile =
-            std::filesystem::path(fmt::format("profiles/{}.json", profileName));
+        auto profileFile = profilesFolder / fmt::format("{}.json", profileName);
         auto profile = make<JsonProfile>(make<JsonFromFile>(profileFile));
 
         // fixes text of std::filesystem::filesystem_error
@@ -71,30 +74,35 @@ auto main(int argc, char *argv[]) -> int {
 
         auto basePackage = make<MemPackage>("base", profile->factorioVersion());
         auto http = make<LoggedHttp>(log, make<HttpClient>());
-        auto app = make<SequentialFilling>(
-            make<LoggedDestination>(
-                log,
-                make<DestinationDirectory>(
-                    "mods",
-                    make<OverloadedFileRepository>(
-                        basePackage,
-                        make<FakeFile>(),
-                        make<FileCachedFileRepository>(
-                            "mods-cached-by-fabgrub",
-                            make<re146::FileRepository>(http)
+        auto modsFolder = std::filesystem::path("mods");
+        auto app = make<ProtectedFolder>(
+            modsFolder,
+            rootFolder / "mods-original",
+            make<SequentialFilling>(
+                make<LoggedDestination>(
+                    log,
+                    make<DestinationDirectory>(
+                        modsFolder,
+                        make<OverloadedFileRepository>(
+                            basePackage,
+                            make<FakeFile>(),
+                            make<FileCachedFileRepository>(
+                                rootFolder / "mods",
+                                make<re146::FileRepository>(http)
+                            )
                         )
                     )
-                )
-            ),
-            make<FileCachedSolution>(
-                std::filesystem::last_write_time(profileFile),
-                fmt::format("profiles/{}.lock.json", profileName),
-                make<PubgrubSolution>(
-                    profile->requirements(),
-                    make<OverloadedRepository>(
-                        basePackage->name(),
-                        make<MemPackages>(basePackage),
-                        make<re146::Repository>(make<MemCachedHttp>(http))
+                ),
+                make<FileCachedSolution>(
+                    std::filesystem::last_write_time(profileFile),
+                    profilesFolder / fmt::format("{}.lock.json", profileName),
+                    make<PubgrubSolution>(
+                        profile->requirements(),
+                        make<OverloadedRepository>(
+                            basePackage->name(),
+                            make<MemPackages>(basePackage),
+                            make<re146::Repository>(make<MemCachedHttp>(http))
+                        )
                     )
                 )
             )
