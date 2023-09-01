@@ -5,15 +5,14 @@
 #pragma once
 
 #include "Log.h"
-#include "utils/ptr.h"
 #include <ostream>
 #include <utility>
 
 class StreamLog : public Log {
-    ptr<std::ostream> out;
+    std::ostream &out; // NOLINT(*-avoid-const-or-ref-data-members)
 
   public:
-    explicit StreamLog(ptr<std::ostream> out) : out(std::move(out)) {}
+    explicit StreamLog(std::ostream &out) : out(out) {}
 
-    void log(const std::string &message) override { *out << message << '\n'; }
+    void log(const std::string &message) override { out << message << '\n'; }
 };

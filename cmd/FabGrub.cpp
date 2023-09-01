@@ -37,13 +37,10 @@ void conditionalThrow(bool condition, const std::string &message) {
 }
 
 auto main(int argc, char *argv[]) -> int {
-    auto log = make<SynchronizedLog>(make<ForkedLog>(
-        make<StreamLog>(std::shared_ptr<std::ostream>(
-            std::shared_ptr<std::nullptr_t>(),
-            &std::cout
-        )),
-        make<StreamLog>(make<std::ofstream>("fabgrub-log.txt"))
-    ));
+    auto logFile = std::ofstream("fabgrub-log.txt");
+    auto log = make<SynchronizedLog>(
+        make<ForkedLog>(make<StreamLog>(std::cout), make<StreamLog>(logFile))
+    );
 
     try {
         conditionalThrow(
