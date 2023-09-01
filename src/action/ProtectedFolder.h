@@ -32,7 +32,7 @@ class ProtectedFolder : public Action {
             )));
         }
 
-        defer([&] {
+        defer finally([&] {
             try {
                 std::filesystem::remove_all(target);
                 std::filesystem::rename(savePath, target);
