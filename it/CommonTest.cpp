@@ -76,7 +76,7 @@ TEST_SUITE("Common integration test") {
                             basePackage,
                             make<FakeFile>(),
                             make<FileCachedFileRepository>(
-                                "mods-cached",
+                                "mods-cached-by-fabgrub",
                                 make<re146::FileRepository>(http)
                             )
                         )
