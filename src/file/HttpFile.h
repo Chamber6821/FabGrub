@@ -21,8 +21,8 @@ class HttpFile : public File {
 
     void saveTo(std::filesystem::path filepath) override {
         try {
-            std::ofstream(filepath, std::ofstream::binary)
-                << http->content(url);
+            auto content = http->content(url);
+            std::ofstream(filepath, std::ofstream::binary) << content;
         } catch (...) {
             std::throw_with_nested(std::runtime_error(fmt::format(
                 "Failed while save file to {} from {}",
