@@ -8,6 +8,7 @@
 #include "http/HttpClient.h"
 #include "http/LoggedHttp.h"
 #include "http/MemCachedHttp.h"
+#include "log/FileLog.h"
 #include "log/ForkedLog.h"
 #include "log/StreamLog.h"
 #include "log/SynchronizedLog.h"
@@ -37,10 +38,13 @@ void conditionalThrow(bool condition, const std::string &message) {
 }
 
 auto main(int argc, char *argv[]) -> int {
-    auto logFile = std::ofstream("fabgrub-log.txt");
-    auto log = make<SynchronizedLog>(
-        make<ForkedLog>(make<StreamLog>(std::cout), make<StreamLog>(logFile))
-    );
+    auto rootFolder = std::filesystem::path("fabgrub");
+    auto profilesFolder = rootFolder / "profiles";
+
+    auto log = make<SynchronizedLog>(make<ForkedLog>(
+        make<StreamLog>(std::cout),
+        make<FileLog>(rootFolder / "log.txt")
+    ));
 
     try {
         conditionalThrow(
@@ -50,9 +54,6 @@ auto main(int argc, char *argv[]) -> int {
                 argc - 1
             )
         );
-
-        auto rootFolder = std::filesystem::path("fabgrub");
-        auto profilesFolder = rootFolder / "profiles";
 
         auto profileName = std::string_view(argv[1]);
         auto profileFile = profilesFolder / fmt::format("{}.json", profileName);
