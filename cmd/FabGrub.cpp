@@ -83,9 +83,11 @@ auto main(int argc, char **argv) -> int {
         auto app = make<ProtectedPath>(
             modsFolder,
             rootFolder / "mods-original",
+            log,
             make<ProtectedPath>(
                 profilesFolder / fmt::format("{}.settings.dat", profileName),
                 modsFolder / "mod-settings.dat",
+                log,
                 make<SequentialFilling>(
                     make<LoggedDestination>(
                         log,
