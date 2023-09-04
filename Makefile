@@ -4,61 +4,57 @@ include $(CONFIG) # user configuration for user platform
 
 BUILD_DIR ?= build
 FAST_BUILD_DIR ?= $(BUILD_DIR)-fast
-CACHE_DIR = $(BUILD_DIR)/make-cache
 
 FOLDERS_WITH_SOURCES = cmd src test-utils tests it
 
-HEADERS = $(wildcard src/**/*.h)
+HEADERS = $(foreach x,$(FOLDERS_WITH_SOURCES),$(wildcard $(x)/**/*.h))
 SOURCES = $(foreach x,$(FOLDERS_WITH_SOURCES),$(wildcard $(x)/**/*.cpp))
 CODES   = $(HEADERS) $(SOURCES)
-CONFIGS = $(wildcard CMakeLists.txt **/CMakeLists.txt)
 
-CLANG_FORMAT_CACHE_FOLDER = $(CACHE_DIR)/clang-format
-CLANG_FORMAT_CACHE_FILES = $(foreach x,$(CODES),$(CLANG_FORMAT_CACHE_FOLDER)/$(x).label)
-
-.PHONY: all cmake cmake-fast format app test it lint clean all-formatted build-all
 all: format test it lint
-
-cmake: $(CONFIGS) $(SOURCES) .clang-tidy
-	cmake -B $(BUILD_DIR) -DCMAKE_EXPORT_COMPILE_COMMANDS=ON $(CMAKE_OPTIONS)
-
-cmake-fast: $(CONFIGS) $(SOURCES)
-	cmake -B $(FAST_BUILD_DIR) -D FAST=ON $(CMAKE_OPTIONS)
-
-format: $(CLANG_FORMAT_CACHE_FILES)
+.PHONY: all
 
 app: TARGET = FabGrub
-app: EXECUTABLE = $(FAST_BUILD_DIR)/bin/$(TARGET)
-app: cmake-fast $(CODES)
+app: cmake-fast
 	cmake --build $(FAST_BUILD_DIR) -t $(TARGET) $(CMAKE_BUILD_OPTIONS)
+	@echo OUT EXECUTABLE: $(FAST_BUILD_DIR)/bin/$(TARGET)
+.PHONY: app
 
 test: TARGET = tests
-test: EXECUTABLE = $(FAST_BUILD_DIR)/bin/$(TARGET)
-test: cmake-fast $(CODES)
+test: cmake-fast
 	cmake --build $(FAST_BUILD_DIR) -t $(TARGET) $(CMAKE_BUILD_OPTIONS)
-	$(EXECUTABLE) --order-by=rand
+	$(FAST_BUILD_DIR)/bin/$(TARGET) --order-by=rand
+.PHONY: test
 
 it: TARGET = it
-it: EXECUTABLE = $(FAST_BUILD_DIR)/bin/$(TARGET)
-it: cmake-fast $(CODES)
+it: cmake-fast
 	cmake --build $(FAST_BUILD_DIR) -t $(TARGET) $(CMAKE_BUILD_OPTIONS)
-	$(EXECUTABLE) --order-by=rand
+	$(FAST_BUILD_DIR)/bin/$(TARGET) --order-by=rand
+.PHONY: it
 
 lint: all-formatted build-all
+.PHONY: lint
 
-clean:
-	cmake -D PATH:STRING=$(BUILD_DIR) -P ./cmake/rm.cmake
+format:
+	clang-format -i $(CODES)
+.PHONY: format
 
 all-formatted:
 	clang-format --dry-run -Werror $(CODES)
+.PHONY: all-formatted
 
 build-all: cmake
 	cmake --build $(BUILD_DIR) $(CMAKE_BUILD_OPTIONS)
+.PHONY: build-all
 
-$(CACHE_DIR):
-	cmake -D PATH:STRING=$(CACHE_DIR) -P ./cmake/mkdir-p.cmake
+cmake:
+	cmake -B $(BUILD_DIR) -DCMAKE_EXPORT_COMPILE_COMMANDS=ON $(CMAKE_OPTIONS)
+.PHONY: cmake
 
-$(CLANG_FORMAT_CACHE_FILES): $(CLANG_FORMAT_CACHE_FOLDER)/%.label: % .clang-format
-	cmake -D PATH:STRING=$(dir $@) -P ./cmake/mkdir-p.cmake
-	clang-format -i $<
-	echo "" > $@
+cmake-fast:
+	cmake -B $(FAST_BUILD_DIR) -D FAST=ON $(CMAKE_OPTIONS)
+.PHONY: cmake-fast
+
+clean:
+	cmake -D PATH:STRING=$(BUILD_DIR) -P ./cmake/rm.cmake
+.PHONY: clean
