@@ -6,6 +6,7 @@
 #include "utils/defer.h"
 #include "utils/ptr.h"
 #include <filesystem>
+#include <utility>
 
 class ProtectedFolder : public Action {
     std::filesystem::path target;
@@ -17,7 +18,8 @@ class ProtectedFolder : public Action {
         std::filesystem::path target, std::filesystem::path savePath,
         ptr<Action> origin
     )
-        : target(target), savePath(savePath), origin(origin) {}
+        : target(std::move(target)), savePath(std::move(savePath)),
+          origin(std::move(origin)) {}
 
     void operator()() override {
         try {
@@ -33,7 +35,7 @@ class ProtectedFolder : public Action {
             )));
         }
 
-        defer finally([&] {
+        const defer finally([&] {
             try {
                 std::filesystem::remove_all(target);
                 if (std::filesystem::exists(savePath))
