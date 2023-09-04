@@ -27,7 +27,7 @@ cmake-fast: $(CONFIGS) $(SOURCES)
 
 format: $(CLANG_FORMAT_CACHE_FILES)
 
-app: TARGET = hello
+app: TARGET = FabGrub
 app: EXECUTABLE = $(FAST_BUILD_DIR)/bin/$(TARGET)
 app: cmake-fast $(CODES)
 	cmake --build $(FAST_BUILD_DIR) -t $(TARGET) $(CMAKE_BUILD_OPTIONS)
