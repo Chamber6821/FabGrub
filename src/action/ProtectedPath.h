@@ -8,13 +8,13 @@
 #include <filesystem>
 #include <utility>
 
-class ProtectedFolder : public Action {
+class ProtectedPath : public Action {
     std::filesystem::path target;
     std::filesystem::path savePath;
     ptr<Action> origin;
 
   public:
-    ProtectedFolder(
+    ProtectedPath(
         std::filesystem::path target, std::filesystem::path savePath,
         ptr<Action> origin
     )

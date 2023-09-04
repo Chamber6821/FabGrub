@@ -1,4 +1,4 @@
-#include "action/ProtectedFolder.h"
+#include "action/ProtectedPath.h"
 #include "action/SequentialFilling.h"
 #include "destination/DestinationDirectory.h"
 #include "destination/LoggedDestination.h"
@@ -80,7 +80,7 @@ auto main(int argc, char **argv) -> int {
         auto basePackage = make<MemPackage>("base", profile->factorioVersion());
         auto http = make<LoggedHttp>(log, make<HttpClient>());
         auto modsFolder = std::filesystem::path("mods");
-        auto app = make<ProtectedFolder>(
+        auto app = make<ProtectedPath>(
             modsFolder,
             rootFolder / "mods-original",
             make<SequentialFilling>(
