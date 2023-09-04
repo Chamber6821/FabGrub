@@ -17,10 +17,7 @@ jobs:
     strategy:
       matrix:
         os: [ windows-2022, ubuntu-22.04 ]
-        config: [ config/debug.mk, config/release.mk, config/release-use-make.mk ]
-        exclude:
-          - os: ubuntu-22.04
-            config: config/release-use-make.mk
+        config: [ config/debug.mk, config/release.mk ]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -50,7 +47,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-22.04, windows-2022 ]
-        config: [ config/release-use-make.mk ]
+        config: [ config/debug.mk ]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
