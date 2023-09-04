@@ -23,7 +23,8 @@ class ProtectedFolder : public Action {
         try {
             std::filesystem::create_directories(savePath);
             std::filesystem::remove_all(savePath);
-            std::filesystem::rename(target, savePath);
+            if (std::filesystem::exists(target))
+                std::filesystem::rename(target, savePath);
         } catch (...) {
             std::throw_with_nested(std::runtime_error(fmt::format(
                 "Failed while move {} to {}",
@@ -35,7 +36,8 @@ class ProtectedFolder : public Action {
         defer finally([&] {
             try {
                 std::filesystem::remove_all(target);
-                std::filesystem::rename(savePath, target);
+                if (std::filesystem::exists(savePath))
+                    std::filesystem::rename(savePath, target);
             } catch (...) {
                 std::throw_with_nested(std::runtime_error(fmt::format(
                     "Failed while restore {} from {}",
