@@ -23,11 +23,13 @@ endif ()
 include(packages.cmake)
 
 add_subdirectory(cmd)
+add_subdirectory(lib)
 add_subdirectory(src)
 add_subdirectory(test-utils)
 add_subdirectory(tests)
 add_subdirectory(it)
 
+target_link_libraries(src PUBLIC lib)
 target_link_libraries(test-utils PRIVATE src)
 target_link_libraries(tests PRIVATE src PRIVATE test-utils)
 target_link_libraries(it PRIVATE src PRIVATE test-utils)
