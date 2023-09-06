@@ -21,6 +21,7 @@
 #include "scalar/JsonFromFile.h"
 #include "solution/FileCachedSolution.h"
 #include "solution/PubgrubSolution.h"
+#include <span>
 
 // NOLINTNEXTLINE(*-no-recursion)
 auto stringify(const std::exception &e, int level) -> std::string {
