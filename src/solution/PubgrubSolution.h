@@ -14,6 +14,7 @@
 #include "requirement/Requirements.h"
 #include "utils/range.h"
 #include <ranges>
+#include <sstream>
 #include <utility>
 
 namespace pubgrub::debug {
