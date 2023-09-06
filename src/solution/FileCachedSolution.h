@@ -45,7 +45,8 @@ class FileCachedSolution : public Solution {
         std::filesystem::file_time_type lastWriteTime,
         std::filesystem::path path, ptr<Solution> origin
     )
-        : lastWriteTime(lastWriteTime), path(path), origin(origin) {}
+        : lastWriteTime(lastWriteTime), path(std::move(path)),
+          origin(std::move(origin)) {}
 
     [[nodiscard]] auto packages() const -> ptr<Packages> override {
         if (not std::filesystem::exists(path) or

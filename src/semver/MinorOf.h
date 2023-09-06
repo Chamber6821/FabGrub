@@ -14,7 +14,7 @@ class MinorOf : public VersionPart {
     std::string version;
 
   public:
-    MinorOf(std::string version) : version(version) {}
+    explicit MinorOf(std::string version) : version(std::move(version)) {}
 
     auto value() -> int override {
         try {

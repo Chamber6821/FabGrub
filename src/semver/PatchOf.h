@@ -14,7 +14,7 @@ class PatchOf : public VersionPart {
     std::string version;
 
   public:
-    PatchOf(std::string version) : version(version) {}
+    explicit PatchOf(std::string version) : version(std::move(version)) {}
 
     auto value() -> int override {
         try {

@@ -46,84 +46,101 @@ auto get_locale() -> std::string_view {
 }
 
 auto main(int argc, char **argv) -> int {
-    auto args = std::span(argv, size_t(argc));
-
-    auto rootFolder = std::filesystem::path("fabgrub");
-    auto profilesFolder = rootFolder / "profiles";
-
-    auto log = make<SynchronizedLog>(make<ForkedLog>(
-        make<StreamLog>(std::cout),
-        make<FileLog>(rootFolder / "log.txt")
-    ));
-
     try {
-        set_locale("");
-        log->info("Current locale: {}", get_locale());
+        try {
+            auto args = std::span(argv, static_cast<size_t>(argc));
 
-        conditionalThrow(
-            args.size() == 2,
-            fmt::format(
-                "FabGrub expect one console argument, but got {}",
-                args.size() - 1
-            )
-        );
+            auto rootFolder = std::filesystem::path("fabgrub");
+            auto profilesFolder = rootFolder / "profiles";
 
-        auto profileName = std::string_view(args[1]);
-        auto profileFile = profilesFolder / fmt::format("{}.json", profileName);
-        auto profile = make<JsonProfile>(make<JsonFromFile>(profileFile));
-        log->info("Chosen profile: {}", profileName);
-        log->info(
-            "Chosen Factorio version: {}",
-            fmt::streamed(*profile->factorioVersion())
-        );
+            auto log = make<SynchronizedLog>(make<ForkedLog>(
+                make<StreamLog>(std::cout),
+                make<FileLog>(rootFolder / "log.txt")
+            ));
 
-        auto basePackage = make<MemPackage>("base", profile->factorioVersion());
-        auto http = make<LoggedHttp>(log, make<HttpClient>());
-        auto modsFolder = std::filesystem::path("mods");
-        auto app = make<ProtectedPath>(
-            modsFolder,
-            rootFolder / "mods-original",
-            log,
-            make<ProtectedPath>(
-                profilesFolder / fmt::format("{}.settings.dat", profileName),
-                modsFolder / "mod-settings.dat",
-                log,
-                make<SequentialFilling>(
-                    make<LoggedDestination>(
+            try {
+                set_locale("");
+                log->info("Current locale: {}", get_locale());
+
+                conditionalThrow(
+                    args.size() == 2,
+                    fmt::format(
+                        "FabGrub expect one console argument, but got {}",
+                        args.size() - 1
+                    )
+                );
+
+                auto profileName = std::string_view(args[1]);
+                auto profileFile =
+                    profilesFolder / fmt::format("{}.json", profileName);
+                auto profile =
+                    make<JsonProfile>(make<JsonFromFile>(profileFile));
+                log->info("Chosen profile: {}", profileName);
+                log->info(
+                    "Chosen Factorio version: {}",
+                    fmt::streamed(*profile->factorioVersion())
+                );
+
+                auto basePackage =
+                    make<MemPackage>("base", profile->factorioVersion());
+                auto http = make<LoggedHttp>(log, make<HttpClient>());
+                auto modsFolder = std::filesystem::path("mods");
+                auto app = make<ProtectedPath>(
+                    modsFolder,
+                    rootFolder / "mods-original",
+                    log,
+                    make<ProtectedPath>(
+                        profilesFolder /
+                            fmt::format("{}.settings.dat", profileName),
+                        modsFolder / "mod-settings.dat",
                         log,
-                        make<DestinationDirectory>(
-                            modsFolder,
-                            make<OverloadedFileRepository>(
-                                basePackage,
-                                make<FakeFile>(),
-                                make<FileCachedFileRepository>(
-                                    rootFolder / "mods",
-                                    make<re146::FileRepository>(http)
+                        make<SequentialFilling>(
+                            make<LoggedDestination>(
+                                log,
+                                make<DestinationDirectory>(
+                                    modsFolder,
+                                    make<OverloadedFileRepository>(
+                                        basePackage,
+                                        make<FakeFile>(),
+                                        make<FileCachedFileRepository>(
+                                            rootFolder / "mods",
+                                            make<re146::FileRepository>(http)
+                                        )
+                                    )
+                                )
+                            ),
+                            make<FileCachedSolution>(
+                                std::filesystem::last_write_time(profileFile),
+                                profilesFolder /
+                                    fmt::format("{}.lock.json", profileName),
+                                make<PubgrubSolution>(
+                                    profile->requirements(),
+                                    make<OverloadedRepository>(
+                                        basePackage->name(),
+                                        make<MemPackages>(basePackage),
+                                        make<re146::Repository>(
+                                            make<MemCachedHttp>(http)
+                                        )
+                                    )
                                 )
                             )
                         )
-                    ),
-                    make<FileCachedSolution>(
-                        std::filesystem::last_write_time(profileFile),
-                        profilesFolder /
-                            fmt::format("{}.lock.json", profileName),
-                        make<PubgrubSolution>(
-                            profile->requirements(),
-                            make<OverloadedRepository>(
-                                basePackage->name(),
-                                make<MemPackages>(basePackage),
-                                make<re146::Repository>(make<MemCachedHttp>(http
-                                ))
-                            )
-                        )
                     )
-                )
-            )
-        );
+                );
 
-        (*app)();
-    } catch (const std::exception &e) {
-        log->info("{}", stringify(e, 0));
-        return 1;
+                (*app)();
+            } catch (const std::exception &e) {
+                log->info("{}", stringify(e, 0));
+                return 1;
+            }
+        } catch (const std::exception &e) {
+            std::cerr << "Unexpected std::exception: " << e.what() << '\n';
+            return 2;
+        } catch (...) {
+            std::cerr << "Unexpected custom exception\n";
+            return 3;
+        }
+    } catch (...) {
+        return 4;
     }
 }

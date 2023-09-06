@@ -9,9 +9,6 @@
 
 class Http : public Interface {
   public:
-    struct Response {
-
-    };
-
-    [[nodiscard]] virtual auto content(const std::string &url) const -> std::string = 0;
+    [[nodiscard]] virtual auto content(const std::string &url) const
+        -> std::string = 0;
 };

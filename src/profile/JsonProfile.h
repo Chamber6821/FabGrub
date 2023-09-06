@@ -18,7 +18,7 @@ class JsonProfile : public Profile {
     explicit JsonProfile(ptr<Scalar<nlohmann::json>> json)
         : json(std::move(json)) {}
 
-    auto factorioVersion() const -> ptr<Version> override {
+    [[nodiscard]] auto factorioVersion() const -> ptr<Version> override {
         try {
             return make<VersionOf>(json->value()["factorio"].get<std::string>()
             );
@@ -29,7 +29,7 @@ class JsonProfile : public Profile {
         }
     }
 
-    auto requirements() const -> ptr<Requirements> override {
+    [[nodiscard]] auto requirements() const -> ptr<Requirements> override {
         try {
             return make<re146::JsonRequirements>(json->value()["requirements"]);
         } catch (...) {

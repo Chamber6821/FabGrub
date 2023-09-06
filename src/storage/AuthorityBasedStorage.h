@@ -17,8 +17,10 @@ class AuthorityBasedStorageTests : public Storage<TId> {
         const TId *id;
 
       public:
-        LazyFile(std::shared_ptr<Storage<TId>> cache,
-                 std::unique_ptr<ReadOnlyFile<TId>> source, const TId &id);
+        LazyFile(
+            std::shared_ptr<Storage<TId>> cache,
+            std::unique_ptr<ReadOnlyFile<TId>> source, const TId &id
+        );
         auto exists() -> bool override;
         auto cloneTo(Storage<TId> &storage) -> bool override;
         void remove() override;
@@ -28,8 +30,10 @@ class AuthorityBasedStorageTests : public Storage<TId> {
     std::shared_ptr<Storage<TId>> cache;
 
   public:
-    AuthorityBasedStorageTests(std::shared_ptr<ReadOnlyStorage<TId>> authority,
-                               std::unique_ptr<Storage<TId>> storage);
+    AuthorityBasedStorageTests(
+        std::shared_ptr<ReadOnlyStorage<TId>> authority,
+        std::unique_ptr<Storage<TId>> storage
+    );
 
     auto requireFor(const TId &id) -> bool;
 
@@ -41,7 +45,8 @@ class AuthorityBasedStorageTests : public Storage<TId> {
 template <class TId>
 AuthorityBasedStorageTests<TId>::LazyFile::LazyFile(
     std::shared_ptr<Storage<TId>> cache,
-    std::unique_ptr<ReadOnlyFile<TId>> source, const TId &id)
+    std::unique_ptr<ReadOnlyFile<TId>> source, const TId &id
+)
     : cache(std::move(cache)), source(std::move(source)), id(&id) {}
 
 template <class TId>
@@ -62,7 +67,8 @@ void AuthorityBasedStorageTests<TId>::LazyFile::remove() {}
 template <class TId>
 AuthorityBasedStorageTests<TId>::AuthorityBasedStorageTests(
     std::shared_ptr<ReadOnlyStorage<TId>> authority,
-    std::unique_ptr<Storage<TId>> storage)
+    std::unique_ptr<Storage<TId>> storage
+)
     : authority(std::move(authority)), cache(std::move(storage)) {}
 
 template <class TId>

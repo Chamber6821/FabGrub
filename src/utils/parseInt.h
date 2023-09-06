@@ -34,7 +34,8 @@ constexpr auto parseInt(std::string_view str) -> int {
     if (str.empty()) throw std::invalid_argument("Empty string isn't a number");
     if ((str.starts_with('-') or str.starts_with('+')) and str.size() < 2)
         throw std::invalid_argument(
-            "String started with sign, but has no digits");
+            "String started with sign, but has no digits"
+        );
 
     if (str.starts_with('-')) return -parseIntWithoutSign(str.substr(1));
     if (str.starts_with('+')) return parseIntWithoutSign(str.substr(1));

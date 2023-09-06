@@ -15,11 +15,11 @@ TEST_SUITE("PubgrubSolution") {
             make<MemRepository>(std::pair{
                 "a",
                 make<MemPackages>(
-                    make<MemPackage>("a", "1.0.0", "bytes-for-1.0.0"),
-                    make<MemPackage>("a", "1.0.1", "bytes-for-1.0.1"),
-                    make<MemPackage>("a", "1.0.2", "bytes-for-1.0.2"),
-                    make<MemPackage>("a", "1.1.0", "bytes-for-1.1.0"),
-                    make<MemPackage>("a", "2.0.0", "bytes-for-2.0.0")
+                    make<MemPackage>("a", "1.0.0"),
+                    make<MemPackage>("a", "1.0.1"),
+                    make<MemPackage>("a", "1.0.2"),
+                    make<MemPackage>("a", "1.1.0"),
+                    make<MemPackage>("a", "2.0.0")
                 )})
         );
 

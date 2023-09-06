@@ -19,8 +19,7 @@ class JsonPackage : public Package {
 
   public:
     JsonPackage(std::string name, nlohmann::json json)
-        : _name(std::move(name)), json(std::move(json)) {
-    }
+        : _name(std::move(name)), json(std::move(json)) {}
 
     [[nodiscard]] auto name() const -> std::string override { return _name; }
 

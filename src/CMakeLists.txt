@@ -9,17 +9,12 @@ add_library(${TARGET} ${HEADERS} ${SOURCES})
 
 target_include_directories(${TARGET} PUBLIC .)
 
-FetchContent_MakeAvailable(fmt)
-target_link_libraries(${TARGET} PUBLIC fmt::fmt)
-
-FetchContent_MakeAvailable(Reactions)
-target_link_libraries(${TARGET} PUBLIC Reactions::Reactions)
-
-FetchContent_MakeAvailable(pubgrub)
-target_link_libraries(${TARGET} PUBLIC pubgrub::pubgrub)
-
-FetchContent_MakeAvailable(cpr)
-target_link_libraries(${TARGET} PUBLIC cpr::cpr)
+FetchContent_MakeAvailable(fmt Reactions pubgrub cpr)
+target_link_libraries(${TARGET}
+        PUBLIC fmt::fmt
+        PUBLIC Reactions::Reactions
+        PUBLIC pubgrub::pubgrub
+        PUBLIC cpr::cpr)
 
 # migrated to lib/nlohmann/json.hpp
 #FetchContent_MakeAvailable(nlohmann_json)

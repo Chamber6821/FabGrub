@@ -12,6 +12,7 @@
 #include "http/HttpClient.h"
 #include "http/LoggedHttp.h"
 #include "http/MemCachedHttp.h"
+#include "log/FileLog.h"
 #include "log/ForkedLog.h"
 #include "log/StreamLog.h"
 #include "log/SynchronizedLog.h"
@@ -39,11 +40,8 @@ auto stringify(const std::exception &e, int level) -> std::string {
 TEST_SUITE("Common integration test") {
     TEST_CASE("") {
         auto log = make<SynchronizedLog>(make<ForkedLog>(
-            make<StreamLog>(std::shared_ptr<std::ostream>(
-                std::shared_ptr<std::nullptr_t>(),
-                &std::cout
-            )),
-            make<StreamLog>(make<std::ofstream>("log.txt"))
+            make<StreamLog>(std::cout),
+            make<FileLog>("log.txt")
         ));
 
         try {

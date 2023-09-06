@@ -28,7 +28,7 @@ class ForkedLog : public Log {
     explicit ForkedLog(Range range) : ForkedLog(range.begin(), range.end()) {}
 
     void log(const std::string &message) override {
-        for (auto log : logs) {
+        for (const auto &log : logs) {
             log->log(message);
         }
     }

@@ -2,9 +2,9 @@
 // Created by Ivan on 26.04.2023.
 //
 
+#include "semver/VersionOf.h"
 #include "doctest-nolint.h"
 #include "random.h"
-#include "semver/VersionOf.h"
 #include <fmt/format.h>
 #include <numeric>
 #include <ranges>
@@ -53,8 +53,10 @@ TEST_SUITE("VersionOf") {
         auto parsed = VersionOf(version);
 
         SUBCASE("major() should throw exception") {
-            CHECK_THROWS_WITH((void)parsed.major(),
-                              exceptionMessage(version).c_str());
+            CHECK_THROWS_WITH(
+                (void)parsed.major(),
+                exceptionMessage(version).c_str()
+            );
         }
 
         SUBCASE("minor() should NOT throw exception") {
@@ -96,8 +98,10 @@ TEST_SUITE("VersionOf") {
         }
 
         SUBCASE("minor() should throw exception") {
-            CHECK_THROWS_WITH((void)parsed.minor(),
-                              exceptionMessage(version).c_str());
+            CHECK_THROWS_WITH(
+                (void)parsed.minor(),
+                exceptionMessage(version).c_str()
+            );
         }
 
         SUBCASE("patch() should NOT throw exception") {
@@ -140,8 +144,10 @@ TEST_SUITE("VersionOf") {
         }
 
         SUBCASE("patch() should throw exception") {
-            CHECK_THROWS_WITH((void)parsed.patch(),
-                              exceptionMessage(version).c_str());
+            CHECK_THROWS_WITH(
+                (void)parsed.patch(),
+                exceptionMessage(version).c_str()
+            );
         }
     }
 
@@ -166,18 +172,24 @@ TEST_SUITE("VersionOf") {
         auto parsed = VersionOf(version);
 
         SUBCASE("major() should throw exception") {
-            CHECK_THROWS_WITH((void)parsed.major(),
-                              exceptionMessage(version).c_str());
+            CHECK_THROWS_WITH(
+                (void)parsed.major(),
+                exceptionMessage(version).c_str()
+            );
         }
 
         SUBCASE("minor() should throw exception") {
-            CHECK_THROWS_WITH((void)parsed.minor(),
-                              exceptionMessage(version).c_str());
+            CHECK_THROWS_WITH(
+                (void)parsed.minor(),
+                exceptionMessage(version).c_str()
+            );
         }
 
         SUBCASE("patch() should throw exception") {
-            CHECK_THROWS_WITH((void)parsed.patch(),
-                              exceptionMessage(version).c_str());
+            CHECK_THROWS_WITH(
+                (void)parsed.patch(),
+                exceptionMessage(version).c_str()
+            );
         }
     }
 
@@ -202,18 +214,24 @@ TEST_SUITE("VersionOf") {
         auto parsed = VersionOf(version);
 
         SUBCASE("major() should throw exception") {
-            CHECK_THROWS_WITH((void)parsed.major(),
-                              exceptionMessage(version).c_str());
+            CHECK_THROWS_WITH(
+                (void)parsed.major(),
+                exceptionMessage(version).c_str()
+            );
         }
 
         SUBCASE("minor() should throw exception") {
-            CHECK_THROWS_WITH((void)parsed.minor(),
-                              exceptionMessage(version).c_str());
+            CHECK_THROWS_WITH(
+                (void)parsed.minor(),
+                exceptionMessage(version).c_str()
+            );
         }
 
         SUBCASE("patch() should throw exception") {
-            CHECK_THROWS_WITH((void)parsed.patch(),
-                              exceptionMessage(version).c_str());
+            CHECK_THROWS_WITH(
+                (void)parsed.patch(),
+                exceptionMessage(version).c_str()
+            );
         }
     }
 }

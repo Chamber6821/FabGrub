@@ -6,7 +6,10 @@
 #include <algorithm>
 #include <utility>
 
-auto randomVersionPart() -> int { return randomVersionPart(0, 100); }
+auto randomVersionPart() -> int {
+    const auto maxReadableVersionPart = 100;
+    return randomVersionPart(0, maxReadableVersionPart);
+}
 
 auto randomVersionPart(int min, int max) -> int { return random(min, max); }
 

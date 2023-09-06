@@ -3,6 +3,7 @@ Checks: >
   *,
   -altera-*,
   -llvmlibc-*,
+  -*-special-member-functions,
   -*-braces-around-statements,
   -llvm-header-guard,
   -fuchsia-default-arguments-calls,
@@ -11,7 +12,7 @@ Checks: >
   -readability-identifier-length,
   -bugprone-easily-swappable-parameters,
   -google-build-using-namespace,
+  -clang-analyzer-optin.cplusplus.UninitializedObject,
 
 WarningsAsErrors: '*'
-HeaderFilterRegex: '(\\|/)(src|test-utils)(\\|/)'
-FormatStyle: file
+HeaderFilterRegex: 'FabGrub(\\|\/)(src|test-utils)'

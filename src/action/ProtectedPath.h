@@ -29,7 +29,10 @@ class ProtectedPath : public Action {
         std::filesystem::path target, std::filesystem::path savePath,
         ptr<Action> origin
     )
-        : ProtectedPath(target, savePath, make<FakeLog>(), origin) {}
+        : ProtectedPath(
+              std::move(target), std::move(savePath), make<FakeLog>(),
+              std::move(origin)
+          ) {}
 
     void operator()() override {
         try {

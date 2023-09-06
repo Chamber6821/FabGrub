@@ -12,13 +12,11 @@ class MemProfile : public Profile {
     ptr<Requirements> _requirements;
 
   public:
-    MemProfile(
-        ptr<Version> factorioVersion, ptr<Requirements> reqs
-    )
+    MemProfile(ptr<Version> factorioVersion, ptr<Requirements> reqs)
         : _factorioVersion(std::move(factorioVersion)),
           _requirements(std::move(reqs)) {}
 
-    auto factorioVersion() const -> ptr<Version> override {
+    [[nodiscard]] auto factorioVersion() const -> ptr<Version> override {
         return _factorioVersion;
     }
 

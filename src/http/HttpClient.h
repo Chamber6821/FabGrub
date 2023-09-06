@@ -8,5 +8,6 @@
 
 class HttpClient : public Http {
   public:
-    [[nodiscard]] auto content(const std::string &url) const -> std::string override;
+    [[nodiscard]] auto content(const std::string &url) const
+        -> std::string override;
 };
