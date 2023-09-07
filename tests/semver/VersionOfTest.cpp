@@ -8,6 +8,7 @@
 #include <fmt/format.h>
 #include <numeric>
 #include <ranges>
+#include <string>
 
 TEST_SUITE("VersionOf") {
 
