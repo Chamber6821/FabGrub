@@ -53,12 +53,13 @@ auto main(int argc, char **argv) -> int {
         try {
             auto args = std::span(argv, static_cast<size_t>(argc));
 
-            auto rootFolder = std::filesystem::path("fabgrub");
-            auto profilesFolder = rootFolder / "profiles";
+            auto root = std::filesystem::current_path();
+            auto home = root / "fabgrub";
+            auto profiles = home / "profiles";
 
             auto log = make<SynchronizedLog>(make<ForkedLog>(
                 make<StreamLog>(std::cout),
-                make<FileLog>(rootFolder / "log.txt")
+                make<FileLog>(home / "log.txt")
             ));
 
             try {
@@ -75,7 +76,7 @@ auto main(int argc, char **argv) -> int {
 
                 auto profileName = std::string_view(args[1]);
                 auto profileFile =
-                    profilesFolder / fmt::format("{}.json", profileName);
+                    profiles / fmt::format("{}.json", profileName);
                 auto profile =
                     make<JsonProfile>(make<JsonFromFile>(profileFile));
                 log->info("Chosen profile: {}", profileName);
@@ -87,27 +88,26 @@ auto main(int argc, char **argv) -> int {
                 auto basePackage =
                     make<MemPackage>("base", profile->factorioVersion());
                 auto http = make<LoggedHttp>(log, make<HttpClient>());
-                auto modsFolder = std::filesystem::path("mods");
+                auto mods = root / "mods";
                 auto app = make<ProtectedPath>(
-                    modsFolder,
-                    rootFolder / "mods-original",
+                    mods,
+                    home / "mods-original",
                     log,
                     make<ProtectedPath>(
-                        profilesFolder /
-                            fmt::format("{}.settings.dat", profileName),
-                        modsFolder / "mod-settings.dat",
+                        profiles / fmt::format("{}.settings.dat", profileName),
+                        mods / "mod-settings.dat",
                         log,
                         make<Sequence>(
                             make<SequentialFilling>(
                                 make<LoggedDestination>(
                                     log,
                                     make<DestinationDirectory>(
-                                        modsFolder,
+                                        mods,
                                         make<OverloadedFileRepository>(
                                             basePackage,
                                             make<FakeFile>(),
                                             make<FileCachedFileRepository>(
-                                                rootFolder / "mods",
+                                                home / "mods",
                                                 make<re146::FileRepository>(http
                                                 )
                                             )
@@ -117,10 +117,10 @@ auto main(int argc, char **argv) -> int {
                                 make<FileCachedSolution>(
                                     std::filesystem::last_write_time(profileFile
                                     ),
-                                    profilesFolder / fmt::format(
-                                                         "{}.lock.json",
-                                                         profileName
-                                                     ),
+                                    profiles / fmt::format(
+                                                   "{}.lock.json",
+                                                   profileName
+                                               ),
                                     make<PubgrubSolution>(
                                         profile->requirements(),
                                         make<OverloadedRepository>(
@@ -133,7 +133,7 @@ auto main(int argc, char **argv) -> int {
                                     )
                                 )
                             ),
-                            make<Executable>("bin/x64/factorio")
+                            make<Executable>(root / "bin" / "x64" / "factorio")
                         )
                     )
                 );
