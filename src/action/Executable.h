@@ -14,7 +14,9 @@ class Executable : public Action {
 
     void operator()() override {
         try {
-            auto code = std::system(exe.string().c_str()); // NOLINT(*-env33-c)
+            // NOLINTNEXTLINE(*-env33-c, *-mt-unsafe)
+            auto code =
+                std::system(fmt::format("{}", fmt::streamed(exe)).c_str());
             if (code != 0)
                 throw std::runtime_error(fmt::format("Exit code {}", code));
         } catch (...) {

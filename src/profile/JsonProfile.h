@@ -20,8 +20,11 @@ class JsonProfile : public Profile {
 
     [[nodiscard]] auto factorioVersion() const -> ptr<Version> override {
         try {
-            return make<VersionOf>(json->value()["factorio"].get<std::string>()
-            );
+            auto v = json->value();
+            if (not v.contains("factorio"))
+                throw std::runtime_error("Profile must have field \"factorio\""
+                );
+            return make<VersionOf>(v["factorio"].get<std::string>());
         } catch (...) {
             std::throw_with_nested(std::runtime_error(
                 "Failed while get factorio version from JSON profile"

@@ -18,7 +18,10 @@ class MinorOf : public VersionPart {
 
     auto value() -> int override {
         try {
-            if (std::ranges::count(version, '.') != 2)
+            if (std::ranges::count(version, '.') < 2)
+                throw std::invalid_argument("Too few dots");
+
+            if (std::ranges::count(version, '.') > 2)
                 throw std::invalid_argument("Too many dots");
 
             const auto firstDot = version.find('.');
@@ -26,9 +29,10 @@ class MinorOf : public VersionPart {
             const auto start = firstDot + 1;
             return parseIntWithoutSign(version.substr(start, lastDot - start));
         } catch (...) {
-            std::throw_with_nested(std::invalid_argument(
-                fmt::format("Could not parse '{}' version", version)
-            ));
+            std::throw_with_nested(std::invalid_argument(fmt::format(
+                "Could not get minor number of version from '{}'",
+                version
+            )));
         }
     }
 };

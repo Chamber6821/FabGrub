@@ -18,14 +18,18 @@ class PatchOf : public VersionPart {
 
     auto value() -> int override {
         try {
-            if (std::ranges::count(version, '.') != 2)
+            if (std::ranges::count(version, '.') < 2)
+                throw std::invalid_argument("Too few dots");
+
+            if (std::ranges::count(version, '.') > 2)
                 throw std::invalid_argument("Too many dots");
 
             return parseIntWithoutSign(version.substr(version.rfind('.') + 1));
         } catch (...) {
-            std::throw_with_nested(std::invalid_argument(
-                fmt::format("Could not parse '{}' version", version)
-            ));
+            std::throw_with_nested(std::invalid_argument(fmt::format(
+                "Could not get patch number of version from '{}'",
+                version
+            )));
         }
     }
 };
