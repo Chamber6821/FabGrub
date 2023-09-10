@@ -1,4 +1,6 @@
+#include "action/Executable.h"
 #include "action/ProtectedPath.h"
+#include "action/Sequence.h"
 #include "action/SequentialFilling.h"
 #include "destination/DestinationDirectory.h"
 #include "destination/LoggedDestination.h"
@@ -95,36 +97,43 @@ auto main(int argc, char **argv) -> int {
                             fmt::format("{}.settings.dat", profileName),
                         modsFolder / "mod-settings.dat",
                         log,
-                        make<SequentialFilling>(
-                            make<LoggedDestination>(
-                                log,
-                                make<DestinationDirectory>(
-                                    modsFolder,
-                                    make<OverloadedFileRepository>(
-                                        basePackage,
-                                        make<FakeFile>(),
-                                        make<FileCachedFileRepository>(
-                                            rootFolder / "mods",
-                                            make<re146::FileRepository>(http)
+                        make<Sequence>(
+                            make<SequentialFilling>(
+                                make<LoggedDestination>(
+                                    log,
+                                    make<DestinationDirectory>(
+                                        modsFolder,
+                                        make<OverloadedFileRepository>(
+                                            basePackage,
+                                            make<FakeFile>(),
+                                            make<FileCachedFileRepository>(
+                                                rootFolder / "mods",
+                                                make<re146::FileRepository>(http
+                                                )
+                                            )
+                                        )
+                                    )
+                                ),
+                                make<FileCachedSolution>(
+                                    std::filesystem::last_write_time(profileFile
+                                    ),
+                                    profilesFolder / fmt::format(
+                                                         "{}.lock.json",
+                                                         profileName
+                                                     ),
+                                    make<PubgrubSolution>(
+                                        profile->requirements(),
+                                        make<OverloadedRepository>(
+                                            basePackage->name(),
+                                            make<MemPackages>(basePackage),
+                                            make<re146::Repository>(
+                                                make<MemCachedHttp>(http)
+                                            )
                                         )
                                     )
                                 )
                             ),
-                            make<FileCachedSolution>(
-                                std::filesystem::last_write_time(profileFile),
-                                profilesFolder /
-                                    fmt::format("{}.lock.json", profileName),
-                                make<PubgrubSolution>(
-                                    profile->requirements(),
-                                    make<OverloadedRepository>(
-                                        basePackage->name(),
-                                        make<MemPackages>(basePackage),
-                                        make<re146::Repository>(
-                                            make<MemCachedHttp>(http)
-                                        )
-                                    )
-                                )
-                            )
+                            make<Executable>("bin/x64/factorio")
                         )
                     )
                 );
