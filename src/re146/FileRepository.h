@@ -8,6 +8,7 @@
 #include "file-repository/FileRepository.h"
 #include "file/HttpFile.h"
 #include "http/Http.h"
+#include "utils/urlEncoded.h"
 
 namespace re146 {
 
@@ -21,7 +22,7 @@ class FileRepository : public ::FileRepository {
         return make<HttpFile>(
             fmt::format(
                 "https://mods-storage.re146.dev/{}/{}.zip",
-                package->name(),
+                urlEncoded(package->name()),
                 fmt::streamed(*package->version())
             ),
             http
