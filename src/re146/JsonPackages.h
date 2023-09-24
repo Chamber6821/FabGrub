@@ -18,8 +18,15 @@ class JsonPackages : public Packages {
   public:
     explicit JsonPackages(nlohmann::json json) : json(std::move(json)) {}
 
-    explicit JsonPackages(const std::string &json)
-        : JsonPackages(nlohmann::json::parse(json)) {}
+    explicit JsonPackages(const std::string &json) {
+        try {
+            this->json = nlohmann::json::parse(json);
+        } catch (...) {
+            std::throw_with_nested(std::runtime_error(
+                fmt::format("Failed parse json packages: {}", json)
+            ));
+        }
+    }
 
     [[nodiscard]] auto count() const -> int override {
         return static_cast<int>(json["releases"].size());
