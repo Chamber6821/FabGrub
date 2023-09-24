@@ -19,11 +19,8 @@ class MajorOf : public VersionPart {
 
     auto value() -> int override {
         try {
-            if (std::ranges::count(version, '.') < 2)
+            if (std::ranges::count(version, '.') < 1)
                 throw std::invalid_argument("Too few dots");
-
-            if (std::ranges::count(version, '.') > 2)
-                throw std::invalid_argument("Too many dots");
 
             return parseIntWithoutSign(version.substr(0, version.find('.')));
         } catch (...) {

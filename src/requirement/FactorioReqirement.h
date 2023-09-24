@@ -6,13 +6,14 @@
 
 #include "Reactions/misc/owning/make.h"
 #include "requirement/Requirement.h"
+#include "semver/FactorioVersionOf.h"
 #include "semver/NextPatch.h"
 #include "semver/VersionOf.h"
 #include <regex>
 
 class FactorioRequirement : public Requirement {
     std::string line;
-    std::regex regex{R"(~?\s*(\S+)\s*(\S+)\s*(\S+))"};
+    std::regex regex{R"(^~?\s*(.+?)\s*(\S+)\s*(\S+)$)"};
 
   public:
     explicit FactorioRequirement(std::string line) : line(std::move(line)) {}
@@ -36,10 +37,10 @@ class FactorioRequirement : public Requirement {
 
             if (match[2] == "<") return make<VersionOf>("0.0.0");
             if (match[2] == "<=") return make<VersionOf>("0.0.0");
-            if (match[2] == "=") return make<VersionOf>(match[3]);
-            if (match[2] == ">=") return make<VersionOf>(match[3]);
+            if (match[2] == "=") return make<FactorioVersionOf>(match[3]);
+            if (match[2] == ">=") return make<FactorioVersionOf>(match[3]);
             if (match[2] == ">")
-                return make<NextPatch>(make<VersionOf>(match[3]));
+                return make<NextPatch>(make<FactorioVersionOf>(match[3]));
 
             throw std::runtime_error(fmt::format(
                 "Invalid equality operator in requirement line \"{}\"",
@@ -57,11 +58,11 @@ class FactorioRequirement : public Requirement {
             std::smatch match;
             std::regex_match(line, match, regex);
 
-            if (match[2] == "<") return make<VersionOf>(match[3]);
+            if (match[2] == "<") return make<FactorioVersionOf>(match[3]);
             if (match[2] == "<=")
-                return make<NextPatch>(make<VersionOf>(match[3]));
+                return make<NextPatch>(make<FactorioVersionOf>(match[3]));
             if (match[2] == "=")
-                return make<NextPatch>(make<VersionOf>(match[3]));
+                return make<NextPatch>(make<FactorioVersionOf>(match[3]));
             if (match[2] == ">=")
                 return make<VersionOf>("999999.999999.999999");
             if (match[2] == ">") return make<VersionOf>("999999.999999.999999");
