@@ -1,4 +1,5 @@
 include(FetchContent)
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 set(FETCHCONTENT_QUIET OFF)
 
 FetchContent_Declare(
