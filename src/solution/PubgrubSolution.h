@@ -102,15 +102,21 @@ class PubgrubSolution : public Solution {
                 auto solution =
                     pubgrub::solve(adopted, adapter::Provider(repository));
 
-                auto packages =
-                    solution | transform([&](const adapter::Requirement &req) {
-                        return make<PackageWithVersion>(
-                            repository->packagesWithName(req.key),
-                            origin(req)
-                        );
-                    });
-
-                return make<MemPackages>(packages);
+                try {
+                    return make<MemPackages>(
+                        solution |
+                        transform([&](const adapter::Requirement &req) {
+                            return make<PackageWithVersion>(
+                                repository->packagesWithName(req.key),
+                                origin(req)
+                            );
+                        })
+                    );
+                } catch (...) {
+                    std::throw_with_nested(std::runtime_error(
+                        "Failed while match requirements with packages"
+                    ));
+                }
             } catch (
                 const pubgrub::solve_failure_type_t<adapter::Requirement> &e
             ) {
