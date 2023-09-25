@@ -100,6 +100,7 @@ auto main(int argc, char **argv) -> int {
                         log,
                         make<Sequence>(
                             make<SequentialFilling>(
+                                make<CtrlCCancellation>(),
                                 make<LoggedDestination>(
                                     log,
                                     make<DestinationDirectory>(
