@@ -13,8 +13,8 @@
 
 class FactorioRequirement : public Requirement {
     std::string line;
-    std::regex full{R"(^~?\s*(.+?)\s*([<=>]+)\s*([0-9.]+)$)"};
-    std::regex partial{R"(^~?\s*(.+?)$)"};
+    std::regex full{R"(^~?\s*(.+?)\s*([<=>]+)\s*([0-9.]+)\s*(#.*)?$)"};
+    std::regex partial{R"(^~?\s*([^#]+?)\s*(#.*)?$)"};
 
   public:
     explicit FactorioRequirement(std::string line) : line(std::move(line)) {}
