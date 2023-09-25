@@ -7,6 +7,7 @@
 #include "Solution.h"
 #include "adapter/pubgrub/Provider.h"
 #include "adapter/pubgrub/Requirement.h"
+#include "cancellation/NonCancellable.h"
 #include "package/MemPackages.h"
 #include "package/PackageWithVersion.h"
 #include "pubgrub/solve.hpp"
@@ -92,8 +93,15 @@ class PubgrubSolution : public Solution {
         ptr<Cancellation> cancellation, ptr<Requirements> requirements,
         ptr<Repository> repository
     )
-        : cancellation(cancellation), requirements(std::move(requirements)),
+        : cancellation(std::move(cancellation)),
+          requirements(std::move(requirements)),
           repository(std::move(repository)) {}
+
+    PubgrubSolution(ptr<Requirements> requirements, ptr<Repository> repository)
+        : PubgrubSolution(
+              make<NonCancellable>(), std::move(requirements),
+              std::move(repository)
+          ) {}
 
     [[nodiscard]] auto packages() const -> ptr<Packages> override {
         try {

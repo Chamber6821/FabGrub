@@ -17,7 +17,7 @@ class CtrlCCancellation : public Cancellation {
         });
     }
 
-    ~CtrlCCancellation() { CtrlCLibrary::ResetCtrlCHandler(id); }
+    ~CtrlCCancellation() override { CtrlCLibrary::ResetCtrlCHandler(id); }
 
     auto canceled() const -> bool override { return _cancelled; }
 
