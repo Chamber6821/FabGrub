@@ -2,6 +2,7 @@
 #include "action/ProtectedPath.h"
 #include "action/Sequence.h"
 #include "action/SequentialFilling.h"
+#include "cancellation/CtrlCCancellation.h"
 #include "destination/DestinationDirectory.h"
 #include "destination/LoggedDestination.h"
 #include "file-repository/FileCachedFileRepository.h"
@@ -122,6 +123,7 @@ auto main(int argc, char **argv) -> int {
                                                    profileName
                                                ),
                                     make<PubgrubSolution>(
+                                        make<CtrlCCancellation>(),
                                         profile->requirements(),
                                         make<OverloadedRepository>(
                                             basePackage->name(),

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Requirement.h"
+#include "cancellation/Cancellation.h"
 #include "fmt/format.h"
 #include "fmt/ostream.h"
 #include "package/ChosenPackage.h"
@@ -18,6 +19,7 @@
 namespace adapter {
 
 class Provider {
+    ptr<Cancellation> cancellation;
     ptr<Repository> repo;
 
     static auto origin(const adapter::Requirement &requirement) {
@@ -25,11 +27,14 @@ class Provider {
     }
 
   public:
-    explicit Provider(ptr<Repository> repo) : repo(std::move(repo)) {}
+    explicit Provider(ptr<Cancellation> cancellation, ptr<Repository> repo)
+        : cancellation(std::move(cancellation)), repo(std::move(repo)) {}
 
     [[nodiscard]] auto best_candidate(const adapter::Requirement &req) const
         -> std::optional<adapter::Requirement> {
         using namespace std::views;
+
+        cancellation->throwIfCanceled();
 
         auto packagesInRange =
             to_range(repo->packagesWithName(req.key)) |
@@ -52,6 +57,8 @@ class Provider {
     [[nodiscard]] auto requirements_of(const adapter::Requirement &req) const
         -> std::vector<adapter::Requirement> {
         using namespace std::views;
+
+        cancellation->throwIfCanceled();
 
         auto package = make<PackageWithVersion>(
             repo->packagesWithName(req.key),

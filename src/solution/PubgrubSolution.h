@@ -23,6 +23,7 @@ try_repr(T) -> try_repr<T>;
 } // namespace pubgrub::debug
 
 class PubgrubSolution : public Solution {
+    ptr<Cancellation> cancellation;
     ptr<Requirements> requirements;
     ptr<Repository> repository;
 
@@ -87,8 +88,11 @@ class PubgrubSolution : public Solution {
     }
 
   public:
-    PubgrubSolution(ptr<Requirements> requirements, ptr<Repository> repository)
-        : requirements(std::move(requirements)),
+    PubgrubSolution(
+        ptr<Cancellation> cancellation, ptr<Requirements> requirements,
+        ptr<Repository> repository
+    )
+        : cancellation(cancellation), requirements(std::move(requirements)),
           repository(std::move(repository)) {}
 
     [[nodiscard]] auto packages() const -> ptr<Packages> override {
@@ -99,8 +103,10 @@ class PubgrubSolution : public Solution {
                            transform(constructor<adapter::Requirement>);
 
             try {
-                auto solution =
-                    pubgrub::solve(adopted, adapter::Provider(repository));
+                auto solution = pubgrub::solve(
+                    adopted,
+                    adapter::Provider(cancellation, repository)
+                );
 
                 try {
                     return make<MemPackages>(
