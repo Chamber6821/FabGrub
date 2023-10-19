@@ -54,7 +54,7 @@ auto main(int argc, char **argv) -> int {
         try {
             auto args = std::span(argv, static_cast<size_t>(argc));
 
-            auto root = std::filesystem::current_path();
+            auto root = std::filesystem::path(".");
             auto home = root / "fabgrub";
             auto profiles = home / "profiles";
 
