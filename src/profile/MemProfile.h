@@ -8,17 +8,11 @@
 #include <utility>
 
 class MemProfile : public Profile {
-    ptr<Version> _factorioVersion;
     ptr<Requirements> _requirements;
 
   public:
-    MemProfile(ptr<Version> factorioVersion, ptr<Requirements> reqs)
-        : _factorioVersion(std::move(factorioVersion)),
-          _requirements(std::move(reqs)) {}
-
-    [[nodiscard]] auto factorioVersion() const -> ptr<Version> override {
-        return _factorioVersion;
-    }
+    explicit MemProfile(ptr<Requirements> reqs)
+        : _requirements(std::move(reqs)) {}
 
     [[nodiscard]] auto requirements() const -> ptr<Requirements> override {
         return _requirements;

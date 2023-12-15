@@ -11,6 +11,5 @@
 
 class Profile : public Interface {
   public:
-    [[nodiscard]] virtual auto factorioVersion() const -> ptr<Version> = 0;
     [[nodiscard]] virtual auto requirements() const -> ptr<Requirements> = 0;
 };

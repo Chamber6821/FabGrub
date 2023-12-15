@@ -18,20 +18,6 @@ class JsonProfile : public Profile {
     explicit JsonProfile(ptr<Scalar<nlohmann::json>> json)
         : json(std::move(json)) {}
 
-    [[nodiscard]] auto factorioVersion() const -> ptr<Version> override {
-        try {
-            auto v = json->value();
-            if (not v.contains("factorio"))
-                throw std::runtime_error("Profile must have field \"factorio\""
-                );
-            return make<VersionOf>(v["factorio"].get<std::string>());
-        } catch (...) {
-            std::throw_with_nested(std::runtime_error(
-                "Failed while get factorio version from JSON profile"
-            ));
-        }
-    }
-
     [[nodiscard]] auto requirements() const -> ptr<Requirements> override {
         try {
             return make<re146::JsonRequirements>(json->value()["requirements"]);
