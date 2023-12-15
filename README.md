@@ -5,24 +5,26 @@ It is console utility for automatically assembly mods for concrete gaming sessio
 # Hot to use
 
 ```shell
-$ fabgrub run profile1
+$ fabgrub profile1
 ```
 
 # What is profile?
 
 Profile is JSON file that looks like that:
 
-File `<factorio-location>/profiles/space.json`:
+File `<factorio-location>/fabgrub/profiles/space.json`:
 
 ```json
 {
-  "space-exploration" : "^1.0.0",
-  "another-mod" : "^0.0.0",
-  "problem-mod" : "^2.0.0 <2.13.0"
+  "requirements" : [
+    "space-exploration",
+    "another-mod >=0.0.0",
+    "problem-mod <2.13.0 # implicit conflict with space-exploration"
+  ]
 }
 ```
 
-Command for run this: `fabgrub run space`
+Command for run this: `fabgrub space`
 
 # How to build
 
@@ -36,11 +38,11 @@ $ make app
 
 # Technically details
 
-- User can load and start game with profile
-    - If some profile already loaded, it will be unloaded
-    - If the profile contains incompatible mods, user will see that combination
+- Before load profile, FabGrub saves user `mods` folder inside `fabgrub` folder
+- After close game, FabGrub restore user `mods` folder from `fabgrub`
+- If the profile contains incompatible mods, user will see that combination
 - Mods will be downloaded from https://re146.dev/factorio/mods/
-- Last used mods will be cached in special folder
+- All mods will be cached in special folder
 
 ## What is profile loading?
 
