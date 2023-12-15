@@ -16,6 +16,7 @@
 #include "log/StreamLog.h"
 #include "log/SynchronizedLog.h"
 #include "package/MemPackage.h"
+#include "package/PackageFromModInfo.h"
 #include "profile/JsonProfile.h"
 #include "re146/FileRepository.h"
 #include "re146/Repository.h"
@@ -81,13 +82,16 @@ auto main(int argc, char **argv) -> int {
                 auto profile =
                     make<JsonProfile>(make<JsonFromFile>(profileFile));
                 log->info("Chosen profile: {}", profileName);
-                log->info(
-                    "Chosen Factorio version: {}",
-                    fmt::streamed(*profile->factorioVersion())
+
+                auto basePackage = make<PackageFromModInfo>(
+                    root / "data" / "base" / "info.json"
                 );
 
-                auto basePackage =
-                    make<MemPackage>("base", profile->factorioVersion());
+                log->info(
+                    "Detected Factorio version: {}",
+                    fmt::streamed(*basePackage->version())
+                );
+
                 auto http = make<LoggedHttp>(log, make<HttpClient>());
                 auto mods = root / "mods";
                 auto app = make<ProtectedPath>(
