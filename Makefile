@@ -1,5 +1,6 @@
 
 CONFIG ?= config/release.mk
+$(info Config file is $(CONFIG))
 include $(CONFIG) # user configuration for user platform
 
 BUILD_DIR ?= build
@@ -11,50 +12,47 @@ HEADERS = $(foreach x,$(FOLDERS_WITH_SOURCES),$(wildcard $(x)/**/*.h))
 SOURCES = $(foreach x,$(FOLDERS_WITH_SOURCES),$(wildcard $(x)/**/*.cpp))
 CODES   = $(HEADERS) $(SOURCES)
 
-all: format test it lint
+CMAKE_CONFIG_LINT = cmake $(CMAKE_OPTIONS) -B $(BUILD_DIR) -D CMAKE_EXPORT_COMPILE_COMMANDS=ON
+CMAKE_CONFIG      = cmake $(CMAKE_OPTIONS) -B $(FAST_BUILD_DIR) -D FAST=ON
+CMAKE_LINT        = cmake --build $(BUILD_DIR)      $(CMAKE_BUILD_OPTIONS)
+CMAKE_BUILD       = cmake --build $(FAST_BUILD_DIR) $(CMAKE_BUILD_OPTIONS)
+
 .PHONY: all
+all: app
 
-app: TARGET = FabGrub
-app: cmake-fast
-	cmake --build $(FAST_BUILD_DIR) -t $(TARGET) $(CMAKE_BUILD_OPTIONS)
-	@echo OUT EXECUTABLE: $(FAST_BUILD_DIR)/bin/$(TARGET)
 .PHONY: app
+app: cmake
+	$(CMAKE_BUILD) -t FabGrub
+	@echo OUT EXECUTABLE: $(FAST_BUILD_DIR)/bin/FabGrub
 
-test: TARGET = tests
-test: cmake-fast
-	cmake --build $(FAST_BUILD_DIR) -t $(TARGET) $(CMAKE_BUILD_OPTIONS)
-	$(FAST_BUILD_DIR)/bin/$(TARGET) --order-by=rand
 .PHONY: test
+test: cmake
+	$(CMAKE_BUILD) -t tests
+	$(FAST_BUILD_DIR)/bin/tests --order-by=rand
 
-it: TARGET = it
-it: cmake-fast
-	cmake --build $(FAST_BUILD_DIR) -t $(TARGET) $(CMAKE_BUILD_OPTIONS)
-	$(FAST_BUILD_DIR)/bin/$(TARGET) --order-by=rand
 .PHONY: it
+it: cmake
+	$(CMAKE_BUILD) -t it
+	$(FAST_BUILD_DIR)/bin/it --order-by=rand
 
-lint: all-formatted build-all
 .PHONY: lint
+lint: all-formatted
+	$(CMAKE_CONFIG_LINT)
+	$(CMAKE_LINT)
 
+.PHONY: format
 format:
 	clang-format -i $(CODES)
-.PHONY: format
 
+.PHONY: all-formatted
 all-formatted:
 	clang-format --dry-run -Werror $(CODES)
-.PHONY: all-formatted
 
-build-all: cmake
-	cmake --build $(BUILD_DIR) $(CMAKE_BUILD_OPTIONS)
-.PHONY: build-all
-
-cmake:
-	cmake -B $(BUILD_DIR) -DCMAKE_EXPORT_COMPILE_COMMANDS=ON $(CMAKE_OPTIONS)
 .PHONY: cmake
+cmake:
+	$(CMAKE_CONFIG)
 
-cmake-fast:
-	cmake -B $(FAST_BUILD_DIR) -D FAST=ON $(CMAKE_OPTIONS)
-.PHONY: cmake-fast
-
+.PHONY: clean
 clean:
 	cmake -D PATH:STRING=$(BUILD_DIR) -P ./cmake/rm.cmake
-.PHONY: clean
+	cmake -D PATH:STRING=$(FAST_BUILD_DIR) -P ./cmake/rm.cmake
