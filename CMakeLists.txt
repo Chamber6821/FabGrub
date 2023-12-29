@@ -34,7 +34,7 @@ foreach (app ${apps})
     target_link_libraries(${app} PRIVATE src)
 endforeach ()
 
-if (NOT DEFINED FAST OR NOT ${FAST})
+if ("${LINT}")
     find_program(CLANG_TIDY NAMES "clang-tidy" REQUIRED)
     set(CLANG_TIDY_COMMAND "${CLANG_TIDY};-p;${CMAKE_CURRENT_BINARY_DIR};--use-color")
     set_target_properties(src test-utils tests it ${apps} PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
