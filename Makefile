@@ -6,7 +6,7 @@ include $(CONFIG) # user configuration for user platform
 BUILD_DIR ?= build
 LINT_DIR  ?= $(BUILD_DIR)-lint
 
-FOLDERS_WITH_SOURCES = cmd src test-utils tests it
+FOLDERS_WITH_SOURCES = cmd src test-utils tests
 
 HEADERS = $(foreach x,$(FOLDERS_WITH_SOURCES),$(wildcard $(x)/**/*.h))
 SOURCES = $(foreach x,$(FOLDERS_WITH_SOURCES),$(wildcard $(x)/**/*.cpp))
@@ -28,12 +28,12 @@ app: cmake
 .PHONY: test
 test: cmake
 	$(CMAKE_BUILD) -t tests
-	$(BUILD_DIR)/bin/tests --order-by=rand
+	$(BUILD_DIR)/bin/tests --order-by=rand --test-suite-exclude=it
 
 .PHONY: it
 it: cmake
-	$(CMAKE_BUILD) -t it
-	$(BUILD_DIR)/bin/it --order-by=rand
+	$(CMAKE_BUILD) -t tests
+	$(BUILD_DIR)/bin/tests --order-by=rand --test-suite=it
 
 .PHONY: lint
 lint: all-formatted
