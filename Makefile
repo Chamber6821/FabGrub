@@ -20,6 +20,9 @@ CMAKE_CONFIG      = cmake $(CMAKE_OPTIONS) -B $(CMAKE_BUILD_DIR)
 CMAKE_LINT        = cmake --build $(CMAKE_LINT_DIR)  $(CMAKE_BUILD_OPTIONS)
 CMAKE_BUILD       = cmake --build $(CMAKE_BUILD_DIR) $(CMAKE_BUILD_OPTIONS)
 
+TEST_BUILD = $(CMAKE_BUILD) -t tests
+TEST_RUN   = $(CMAKE_BUILD_DIR)/bin/tests
+
 .PHONY: all
 all: app
 
@@ -30,13 +33,13 @@ app: $(CMAKE_BUILD_DIR)
 
 .PHONY: test
 test: $(CMAKE_BUILD_DIR)
-	$(CMAKE_BUILD) -t tests
-	$(CMAKE_BUILD_DIR)/bin/tests --order-by=rand --test-suite-exclude=it
+	$(TEST_BUILD)
+	$(TEST_RUN) --order-by=rand --test-suite-exclude=it
 
 .PHONY: it
 it: $(CMAKE_BUILD_DIR)
-	$(CMAKE_BUILD) -t tests
-	$(CMAKE_BUILD_DIR)/bin/tests --order-by=rand --test-suite=it
+	$(TEST_BUILD)
+	$(TEST_RUN) --order-by=rand --test-suite=it
 
 .PHONY: lint
 lint: all-formatted
