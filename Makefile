@@ -1,39 +1,42 @@
+# https://stackoverflow.com/a/18258352/13830772
+rwildcard = $(filter-out \ ,$(foreach pattern,$(2),$(wildcard $(1)/$(pattern)))$(foreach child,$(wildcard $(1)/*),$(call rwildcard,$(child),$(2))))
 
 CONFIG ?= config/release.mk
 $(info Config file is $(CONFIG))
 include $(CONFIG) # user configuration for user platform
 
-BUILD_DIR ?= build
-LINT_DIR  ?= $(BUILD_DIR)-lint
+BUILD_NAME     ?= default
+CMAKE_BUILD_DIR = cmake-build-/$(BUILD_NAME)
+CMAKE_LINT_DIR  = cmake-build-/$(BUILD_NAME)-lint
+FILE_LIST       = cmake-build-/$(BUILD_NAME)-file-list
 
 FOLDERS_WITH_SOURCES = cmd src test-utils tests
+CONFIGS = CMakeLists.txt $(foreach x,$(FOLDERS_WITH_SOURCES),$(call rwildcard,$(x),CMakeLists.txt))
+CODES   = $(foreach x,$(FOLDERS_WITH_SOURCES),$(call rwildcard,$(x),*.h *.cpp))
+$(shell cmake -D OUT=$(FILE_LIST) -D FILES="$(CODES)" -P ./cmake/update-file-list.cmake)
 
-HEADERS = $(foreach x,$(FOLDERS_WITH_SOURCES),$(wildcard $(x)/**/*.h))
-SOURCES = $(foreach x,$(FOLDERS_WITH_SOURCES),$(wildcard $(x)/**/*.cpp))
-CODES   = $(HEADERS) $(SOURCES)
-
-CMAKE_CONFIG_LINT = cmake $(CMAKE_OPTIONS) -B $(LINT_DIR) -D LINT=ON -D CMAKE_EXPORT_COMPILE_COMMANDS=ON
-CMAKE_CONFIG      = cmake $(CMAKE_OPTIONS) -B $(BUILD_DIR)
-CMAKE_LINT        = cmake --build $(LINT_DIR)  $(CMAKE_BUILD_OPTIONS)
-CMAKE_BUILD       = cmake --build $(BUILD_DIR) $(CMAKE_BUILD_OPTIONS)
+CMAKE_CONFIG_LINT = cmake $(CMAKE_OPTIONS) -B $(CMAKE_LINT_DIR) -D LINT=ON -D CMAKE_EXPORT_COMPILE_COMMANDS=ON
+CMAKE_CONFIG      = cmake $(CMAKE_OPTIONS) -B $(CMAKE_BUILD_DIR)
+CMAKE_LINT        = cmake --build $(CMAKE_LINT_DIR)  $(CMAKE_BUILD_OPTIONS)
+CMAKE_BUILD       = cmake --build $(CMAKE_BUILD_DIR) $(CMAKE_BUILD_OPTIONS)
 
 .PHONY: all
 all: app
 
 .PHONY: app
-app: cmake
+app: $(CMAKE_BUILD_DIR)
 	$(CMAKE_BUILD) -t FabGrub
-	@echo OUT EXECUTABLE: $(BUILD_DIR)/bin/FabGrub
+	@echo OUT EXECUTABLE: $(CMAKE_BUILD_DIR)/bin/FabGrub
 
 .PHONY: test
-test: cmake
+test: $(CMAKE_BUILD_DIR)
 	$(CMAKE_BUILD) -t tests
-	$(BUILD_DIR)/bin/tests --order-by=rand --test-suite-exclude=it
+	$(CMAKE_BUILD_DIR)/bin/tests --order-by=rand --test-suite-exclude=it
 
 .PHONY: it
-it: cmake
+it: $(CMAKE_BUILD_DIR)
 	$(CMAKE_BUILD) -t tests
-	$(BUILD_DIR)/bin/tests --order-by=rand --test-suite=it
+	$(CMAKE_BUILD_DIR)/bin/tests --order-by=rand --test-suite=it
 
 .PHONY: lint
 lint: all-formatted
@@ -52,7 +55,9 @@ all-formatted:
 cmake:
 	$(CMAKE_CONFIG)
 
+$(CMAKE_BUILD_DIR): $(FILE_LIST) $(CONFIGS)
+	$(CMAKE_CONFIG)
+
 .PHONY: clean
 clean:
-	cmake -D PATH:STRING=$(BUILD_DIR) -P ./cmake/rm.cmake
-	cmake -D PATH:STRING=$(LINT_DIR)  -P ./cmake/rm.cmake
+	cmake -D PATH:STRING=cmake-build- -P ./cmake/rm.cmake
