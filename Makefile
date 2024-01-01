@@ -6,9 +6,9 @@ $(info Config file is $(CONFIG))
 include $(CONFIG) # user configuration for user platform
 
 BUILD_NAME     ?= default
-CMAKE_BUILD_DIR = cmake-build-/$(BUILD_NAME)
-CMAKE_LINT_DIR  = cmake-build-/$(BUILD_NAME)-lint
-FILE_LIST       = cmake-build-/$(BUILD_NAME)-file-list
+CMAKE_BUILD_DIR = build/$(BUILD_NAME)
+CMAKE_LINT_DIR  = build/$(BUILD_NAME)-lint
+FILE_LIST       = build/$(BUILD_NAME)-file-list
 
 FOLDERS_WITH_SOURCES = cmd src test-utils tests
 CONFIGS = CMakeLists.txt $(foreach x,$(FOLDERS_WITH_SOURCES),$(call rwildcard,$(x),CMakeLists.txt))
@@ -60,4 +60,4 @@ $(CMAKE_BUILD_DIR): $(FILE_LIST) $(CONFIGS)
 
 .PHONY: clean
 clean:
-	cmake -D PATH:STRING=cmake-build- -P ./cmake/rm.cmake
+	cmake -D PATH:STRING=build -P ./cmake/rm.cmake
