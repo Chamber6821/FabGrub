@@ -52,7 +52,11 @@ TEST_SUITE("VersionOf") {
         SUBCASE("major() should throw exception") {
             CHECK_THROWS_WITH(
                 (void)parsed.major(),
-                fmt::format("Could not get major number of version from '{}'", version).c_str()
+                fmt::format(
+                    "Could not get major number of version from '{}'",
+                    version
+                )
+                    .c_str()
             );
         }
 
@@ -97,7 +101,11 @@ TEST_SUITE("VersionOf") {
         SUBCASE("minor() should throw exception") {
             CHECK_THROWS_WITH(
                 (void)parsed.minor(),
-                fmt::format("Could not get minor number of version from '{}'", version).c_str()
+                fmt::format(
+                    "Could not get minor number of version from '{}'",
+                    version
+                )
+                    .c_str()
             );
         }
 
@@ -143,7 +151,11 @@ TEST_SUITE("VersionOf") {
         SUBCASE("patch() should throw exception") {
             CHECK_THROWS_WITH(
                 (void)parsed.patch(),
-                fmt::format("Could not get patch number of version from '{}'", version).c_str()
+                fmt::format(
+                    "Could not get patch number of version from '{}'",
+                    version
+                )
+                    .c_str()
             );
         }
     }
@@ -180,14 +192,22 @@ TEST_SUITE("VersionOf") {
         SUBCASE("minor() should throw exception") {
             CHECK_THROWS_WITH(
                 (void)parsed.minor(),
-                fmt::format("Could not get minor number of version from '{}'", version).c_str()
+                fmt::format(
+                    "Could not get minor number of version from '{}'",
+                    version
+                )
+                    .c_str()
             );
         }
 
         SUBCASE("patch() should throw exception") {
             CHECK_THROWS_WITH(
                 (void)parsed.patch(),
-                fmt::format("Could not get patch number of version from '{}'", version).c_str()
+                fmt::format(
+                    "Could not get patch number of version from '{}'",
+                    version
+                )
+                    .c_str()
             );
         }
     }
@@ -209,7 +229,11 @@ TEST_SUITE("VersionOf") {
         SUBCASE("patch() should throw exception") {
             CHECK_THROWS_WITH(
                 (void)parsed.patch(),
-                fmt::format("Could not get patch number of version from '{}'", version).c_str()
+                fmt::format(
+                    "Could not get patch number of version from '{}'",
+                    version
+                )
+                    .c_str()
             );
         }
     }
