@@ -8,9 +8,11 @@
 #include "utils/parseInt.h"
 #include <algorithm>
 #include <fmt/format.h>
+#include <regex>
 #include <string>
 
 class MinorOf : public VersionPart {
+    std::regex regex{R"(^[^.]*\.(\d+))"};
     std::string version;
 
   public:
@@ -18,13 +20,13 @@ class MinorOf : public VersionPart {
 
     auto value() -> int override {
         try {
-            if (std::ranges::count(version, '.') < 1)
-                throw std::invalid_argument("Too few dots");
+            std::smatch match;
+            if (not std::regex_search(version, match, regex))
+                throw std::runtime_error(
+                    fmt::format("Could not get number from '{}'", version)
+                );
 
-            const auto firstDot = version.find('.');
-            const auto lastDot = version.rfind('.');
-            const auto start = firstDot + 1;
-            return parseIntWithoutSign(version.substr(start, lastDot - start));
+            return parseIntWithoutSign({match[1].first, match[1].second});
         } catch (...) {
             std::throw_with_nested(std::invalid_argument(fmt::format(
                 "Could not get minor number of version from '{}'",

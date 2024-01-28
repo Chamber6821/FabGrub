@@ -8,9 +8,11 @@
 #include "utils/parseInt.h"
 #include <algorithm>
 #include <fmt/format.h>
+#include <regex>
 #include <string>
 
 class PatchOf : public VersionPart {
+    std::regex regex{R"(^[^.]*\.[^.]*\.(\d+))"};
     std::string version;
 
   public:
@@ -18,13 +20,13 @@ class PatchOf : public VersionPart {
 
     auto value() -> int override {
         try {
-            if (std::ranges::count(version, '.') < 2)
-                throw std::invalid_argument("Too few dots");
+            std::smatch match;
+            if (not std::regex_search(version, match, regex))
+                throw std::runtime_error(
+                    fmt::format("Could not get number from '{}'", version)
+                );
 
-            if (std::ranges::count(version, '.') > 2)
-                throw std::invalid_argument("Too many dots");
-
-            return parseIntWithoutSign(version.substr(version.rfind('.') + 1));
+            return parseIntWithoutSign({match[1].first, match[1].second});
         } catch (...) {
             std::throw_with_nested(std::invalid_argument(fmt::format(
                 "Could not get patch number of version from '{}'",
