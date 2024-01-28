@@ -21,7 +21,7 @@ using AuthorityBasedStorage = file_management::AuthorityBasedStorageTests<Id>;
 
 auto getRandomId() -> Id {
     static std::mt19937 generator(std::random_device{}());
-    static std::uniform_int_distribution distribution(
+    const static std::uniform_int_distribution distribution(
         0,
         std::numeric_limits<int>::max()
     );
@@ -74,7 +74,7 @@ class StubStorage : public Storage {
     explicit StubStorage(FileBuilder fileBuilder)
         : fileBuilder(std::move(fileBuilder)) {
         std::mt19937 generator(std::random_device{}());
-        std::uniform_int_distribution distribution(
+        const std::uniform_int_distribution distribution(
             0,
             std::numeric_limits<int>::max()
         );
