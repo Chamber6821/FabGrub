@@ -15,8 +15,8 @@ class PackageFromModInfo : public Package {
     explicit PackageFromModInfo(ptr<Scalar<nlohmann::json>> json)
         : json(std::move(json)) {}
 
-    explicit PackageFromModInfo(std::filesystem::path file)
-        : PackageFromModInfo(make<JsonFromFile>(std::move(file))) {}
+    explicit PackageFromModInfo(const std::filesystem::path &file)
+        : PackageFromModInfo(make<JsonFromFile>(file)) {}
 
     [[nodiscard]] auto name() const -> std::string override {
         return json->value()["name"].get<std::string>();
