@@ -49,6 +49,8 @@ class Requirement {
     explicit Requirement(const in<Package> &package)
         : Requirement(package->name(), package->version()) {}
 
+    Requirement(const Requirement &other) = default;
+
     [[nodiscard]] auto with_range(version_range_type r) const -> Requirement {
         return {key, std::move(r)};
     }
