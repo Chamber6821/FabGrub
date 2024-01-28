@@ -12,10 +12,6 @@
 
 TEST_SUITE("VersionOf") {
 
-    auto exceptionMessage(std::string_view invalidVersion)->std::string {
-        return fmt::format("Could not parse '{}' version", invalidVersion);
-    }
-
     TEST_CASE("should parse random version") {
         const auto major = randomVersionPart();
         const auto minor = randomVersionPart();
@@ -56,7 +52,7 @@ TEST_SUITE("VersionOf") {
         SUBCASE("major() should throw exception") {
             CHECK_THROWS_WITH(
                 (void)parsed.major(),
-                exceptionMessage(version).c_str()
+                fmt::format("Could not get major number of version from '{}'", version).c_str()
             );
         }
 
@@ -101,7 +97,7 @@ TEST_SUITE("VersionOf") {
         SUBCASE("minor() should throw exception") {
             CHECK_THROWS_WITH(
                 (void)parsed.minor(),
-                exceptionMessage(version).c_str()
+                fmt::format("Could not get minor number of version from '{}'", version).c_str()
             );
         }
 
@@ -147,91 +143,73 @@ TEST_SUITE("VersionOf") {
         SUBCASE("patch() should throw exception") {
             CHECK_THROWS_WITH(
                 (void)parsed.patch(),
-                exceptionMessage(version).c_str()
+                fmt::format("Could not get patch number of version from '{}'", version).c_str()
             );
         }
     }
 
-    TEST_CASE("dots more than 2") {
-        using namespace std::views; // NOLINT(google-build-using-namespace)
-
-        const auto minSegmentsCount = 4;
-        const auto maxSegmentsCount = 10;
-
-        auto generated =                                          //
-            iota(0, random(minSegmentsCount, maxSegmentsCount))   //
-            | transform([](auto x) { return std::to_string(x); }) //
-            | transform([](auto x) { return "." + x; })           //
-            | join                                                //
-            | drop(1); // drop the first extra dot
-
-        std::string version;
-        std::ranges::copy(generated, std::back_inserter(version));
+    TEST_CASE("few dots") {
+        auto version = std::string("0.1.2.3.4.5.6");
+        auto parsed = VersionOf(version);
 
         CAPTURE(version);
 
+        SUBCASE("major() should not throw exception") {
+            CHECK_NOTHROW((void)parsed.major());
+        }
+
+        SUBCASE("minor() should not throw exception") {
+            CHECK_NOTHROW((void)parsed.minor());
+        }
+
+        SUBCASE("patch() should not throw exception") {
+            CHECK_NOTHROW((void)parsed.patch());
+        }
+    }
+
+    TEST_CASE("no dots") {
+        auto version = std::string("0");
         auto parsed = VersionOf(version);
 
-        SUBCASE("major() should throw exception") {
-            CHECK_THROWS_WITH(
-                (void)parsed.major(),
-                exceptionMessage(version).c_str()
-            );
+        CAPTURE(version);
+
+        SUBCASE("major() should not throw exception") {
+            CHECK_NOTHROW((void)parsed.major());
         }
 
         SUBCASE("minor() should throw exception") {
             CHECK_THROWS_WITH(
                 (void)parsed.minor(),
-                exceptionMessage(version).c_str()
+                fmt::format("Could not get minor number of version from '{}'", version).c_str()
             );
         }
 
         SUBCASE("patch() should throw exception") {
             CHECK_THROWS_WITH(
                 (void)parsed.patch(),
-                exceptionMessage(version).c_str()
+                fmt::format("Could not get patch number of version from '{}'", version).c_str()
             );
         }
     }
 
-    TEST_CASE("dots less than 2") {
-        using namespace std::views; // NOLINT(google-build-using-namespace)
-
-        const auto minSegmentsCount = 0;
-        const auto maxSegmentsCount = 2;
-
-        auto generated =                                          //
-            iota(0, random(minSegmentsCount, maxSegmentsCount))   //
-            | transform([](auto x) { return std::to_string(x); }) //
-            | transform([](auto x) { return "." + x; })           //
-            | join                                                //
-            | drop(1); // drop the first extra dot
-
-        std::string version;
-        std::ranges::copy(generated, std::back_inserter(version));
+    TEST_CASE("single dot") {
+        auto version = std::string("0.1");
+        auto parsed = VersionOf(version);
 
         CAPTURE(version);
 
-        auto parsed = VersionOf(version);
-
-        SUBCASE("major() should throw exception") {
-            CHECK_THROWS_WITH(
-                (void)parsed.major(),
-                exceptionMessage(version).c_str()
-            );
+        SUBCASE("major() should not throw exception") {
+            CHECK_NOTHROW((void)parsed.major());
         }
 
-        SUBCASE("minor() should throw exception") {
-            CHECK_THROWS_WITH(
-                (void)parsed.minor(),
-                exceptionMessage(version).c_str()
-            );
+        SUBCASE("minor() should not throw exception") {
+            CHECK_NOTHROW((void)parsed.minor());
         }
 
         SUBCASE("patch() should throw exception") {
             CHECK_THROWS_WITH(
                 (void)parsed.patch(),
-                exceptionMessage(version).c_str()
+                fmt::format("Could not get patch number of version from '{}'", version).c_str()
             );
         }
     }
