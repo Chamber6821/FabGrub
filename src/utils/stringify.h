@@ -4,7 +4,7 @@
 #include <string>
 
 // NOLINTNEXTLINE(*-no-recursion)
-auto stringify(const std::exception &e, int level) -> std::string {
+inline auto stringify(const std::exception &e, int level) -> std::string {
     auto part = std::string(level, ' ') + "exception: " + e.what() + '\n';
     try {
         std::rethrow_if_nested(e);
