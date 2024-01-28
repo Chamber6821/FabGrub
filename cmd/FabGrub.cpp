@@ -25,30 +25,9 @@
 #include "scalar/JsonFromFile.h"
 #include "solution/FileCachedSolution.h"
 #include "solution/PubgrubSolution.h"
+#include "utils/locale.h"
+#include "utils/stringify.h"
 #include <span>
-
-// NOLINTNEXTLINE(*-no-recursion)
-auto stringify(const std::exception &e, int level) -> std::string {
-    auto part = std::string(level, ' ') + "exception: " + e.what() + '\n';
-    try {
-        std::rethrow_if_nested(e);
-        return part;
-    } catch (const std::exception &nestedException) {
-        return part + stringify(nestedException, level + 1);
-    }
-}
-
-void conditionalThrow(bool condition, const std::string &message) {
-    if (not condition) throw std::runtime_error(message);
-}
-
-void set_locale(const char *locale) {
-    (void)std::setlocale(LC_ALL, locale); // NOLINT(*-mt-unsafe)
-}
-
-auto get_locale() -> std::string_view {
-    return std::setlocale(LC_ALL, nullptr); // NOLINT(*-mt-unsafe)
-}
 
 auto main(int argc, char **argv) -> int {
     try {
@@ -68,13 +47,11 @@ auto main(int argc, char **argv) -> int {
                 set_locale("");
                 log->info("Current locale: {}", get_locale());
 
-                conditionalThrow(
-                    args.size() == 2,
-                    fmt::format(
+                if (args.size() != 2)
+                    throw std::runtime_error(fmt::format(
                         "FabGrub expect one console argument, but got {}",
                         args.size() - 1
-                    )
-                );
+                    ));
 
                 auto profileName = std::string_view(args[1]);
                 auto profileFile =
