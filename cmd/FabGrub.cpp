@@ -30,111 +30,110 @@
 #include <span>
 
 auto main(int argc, char **argv) -> int {
+    ptr<Log> log = make<StreamLog>(std::cout);
     try {
-        try {
-            auto args = std::span(argv, static_cast<size_t>(argc));
-
-            auto root = std::filesystem::path(".");
-            auto home = root / "fabgrub";
-            auto profiles = home / "profiles";
-
-            auto log = make<SynchronizedLog>(make<ForkedLog>(
-                make<StreamLog>(std::cout),
-                make<FileLog>(home / "log.txt")
+        auto args = std::span(argv, static_cast<size_t>(argc));
+        if (args.size() != 2)
+            throw std::runtime_error(fmt::format(
+                "FabGrub expect one console argument, but got {}",
+                args.size() - 1
             ));
+        auto profileName = std::string_view(args[1]);
 
-            try {
-                set_locale("");
-                log->info("Current locale: {}", get_locale());
+        auto root = std::filesystem::path(".");
+        auto home = root / "fabgrub";
+        auto profiles = home / "profiles";
+        auto logFile = home / "log.txt";
+        auto profileFile = profiles / fmt::format("{}.json", profileName);
+        auto profileLockFile =
+            profiles / fmt::format("{}.lock.json", profileName);
+        auto basePackageFile = root / "data" / "base" / "info.json";
+        auto mods = root / "mods";
+        auto settings = mods / "mod-settings.dat";
+        auto protectedUserMods = home / "mods-original";
+        auto protectedUserSettings =
+            profiles / fmt::format("{}.settings.dat", profileName);
+        auto cachedMods = home / "mods";
+        auto factorioExecutable = root / "bin" / "x64" / "factorio";
 
-                if (args.size() != 2)
-                    throw std::runtime_error(fmt::format(
-                        "FabGrub expect one console argument, but got {}",
-                        args.size() - 1
-                    ));
+        log =
+            make<SynchronizedLog>(make<ForkedLog>(log, make<FileLog>(logFile)));
 
-                auto profileName = std::string_view(args[1]);
-                auto profileFile =
-                    profiles / fmt::format("{}.json", profileName);
-                auto profile =
-                    make<JsonProfile>(make<JsonFromFile>(profileFile));
-                log->info("Chosen profile: {}", profileName);
+        set_locale("");
+        log->info("Current locale: {}", get_locale());
 
-                auto basePackage = make<PackageFromModInfo>(
-                    root / "data" / "base" / "info.json"
-                );
+        auto profile = make<JsonProfile>(make<JsonFromFile>(profileFile));
+        log->info("Chosen profile: {}", profileName);
 
-                log->info(
-                    "Detected Factorio version: {}",
-                    fmt::streamed(*basePackage->version())
-                );
+        auto basePackage = make<PackageFromModInfo>(basePackageFile);
 
-                auto http = make<LoggedHttp>(log, make<HttpClient>());
-                auto mods = root / "mods";
-                auto app = make<ProtectedPath>(
-                    mods,
-                    home / "mods-original",
-                    log,
-                    make<ProtectedPath>(
-                        profiles / fmt::format("{}.settings.dat", profileName),
-                        mods / "mod-settings.dat",
-                        log,
-                        make<Sequence>(
-                            make<SequentialFilling>(
-                                make<CtrlCCancellation>(),
-                                make<LoggedDestination>(
-                                    log,
-                                    make<DestinationDirectory>(
-                                        mods,
-                                        make<OverloadedFileRepository>(
-                                            basePackage,
-                                            make<FakeFile>(),
-                                            make<FileCachedFileRepository>(
-                                                home / "mods",
-                                                make<re146::FileRepository>(http
-                                                )
-                                            )
-                                        )
-                                    )
-                                ),
-                                make<FileCachedSolution>(
-                                    std::filesystem::last_write_time(profileFile
-                                    ),
-                                    profiles / fmt::format(
-                                                   "{}.lock.json",
-                                                   profileName
-                                               ),
-                                    make<PubgrubSolution>(
-                                        make<CtrlCCancellation>(),
-                                        profile->requirements(),
-                                        make<OverloadedRepository>(
-                                            basePackage->name(),
-                                            make<MemPackages>(basePackage),
-                                            make<re146::Repository>(
-                                                make<MemCachedHttp>(http)
-                                            )
-                                        )
+        log->info(
+            "Detected Factorio version: {}",
+            fmt::streamed(*basePackage->version())
+        );
+
+        auto http = make<LoggedHttp>(log, make<HttpClient>());
+        auto app = make<ProtectedPath>(
+            mods,
+            protectedUserMods,
+            log,
+            make<ProtectedPath>(
+                protectedUserSettings,
+                settings,
+                log,
+                make<Sequence>(
+                    make<SequentialFilling>(
+                        make<CtrlCCancellation>(),
+                        make<LoggedDestination>(
+                            log,
+                            make<DestinationDirectory>(
+                                mods,
+                                make<OverloadedFileRepository>(
+                                    basePackage,
+                                    make<FakeFile>(),
+                                    make<FileCachedFileRepository>(
+                                        cachedMods,
+                                        make<re146::FileRepository>(http)
                                     )
                                 )
-                            ),
-                            make<Executable>(root / "bin" / "x64" / "factorio")
+                            )
+                        ),
+                        make<FileCachedSolution>(
+                            std::filesystem::last_write_time(profileFile),
+                            profileLockFile,
+                            make<PubgrubSolution>(
+                                make<CtrlCCancellation>(),
+                                profile->requirements(),
+                                make<OverloadedRepository>(
+                                    basePackage->name(),
+                                    make<MemPackages>(basePackage),
+                                    make<re146::Repository>(
+                                        make<MemCachedHttp>(http)
+                                    )
+                                )
+                            )
                         )
-                    )
-                );
+                    ),
+                    make<Executable>(factorioExecutable)
+                )
+            )
+        );
 
-                (*app)();
-            } catch (const std::exception &e) {
+        (*app)();
+    } catch (const std::exception &e) {
+        try {
+            try {
                 log->info("{}", stringify(e, 0));
                 return 1;
+            } catch (const std::exception &e) {
+                std::cerr << "Unexpected std::exception: " << e.what() << '\n';
+                return 2;
+            } catch (...) {
+                std::cerr << "Unexpected custom exception\n";
+                return 3;
             }
-        } catch (const std::exception &e) {
-            std::cerr << "Unexpected std::exception: " << e.what() << '\n';
-            return 2;
         } catch (...) {
-            std::cerr << "Unexpected custom exception\n";
-            return 3;
+            return 4;
         }
-    } catch (...) {
-        return 4;
     }
 }
